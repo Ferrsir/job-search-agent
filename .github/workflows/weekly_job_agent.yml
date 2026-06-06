@@ -28,7 +28,7 @@ jobs:
         run: pytest
       - name: Run job agent
         env:
-          DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
+          DRY_RUN: "false"
           GOOGLE_SHEET_ID: "1gmg8EV3FUerg8oeQoAVq1LoATvg4ixgmeVtqWLp8FhI"
           GMAIL_TO: "ferrislavigne@gmail.com"
           GMAIL_SEARCH_QUERY: 'label:"Job Search Agent" newer_than:14d'
