@@ -24,10 +24,11 @@ def test_digest_groups_requested_tabs_and_duplicates_roles():
 
     groups = _group_jobs([scored])
 
-    assert list(groups) == ["Top Roles", "Dallas", "Austin", "Remote", "Discarded", "Expired"]
+    assert list(groups) == ["Top Roles", "DFW", "Denton", "Plano / Frisco", "Remote", "Austin / Houston", "Discarded", "Expired"]
     assert groups["Top Roles"][0] == scored
-    assert groups["Dallas"][0] == scored
-    assert groups["Austin"] == []
+    assert groups["DFW"][0] == scored
+    assert groups["Denton"] == []
+    assert groups["Plano / Frisco"] == []
     assert groups["Remote"] == []
     assert groups["Discarded"] == []
 
@@ -52,7 +53,7 @@ def test_digest_groups_discarded_roles():
 
     groups = _group_jobs([scored])
 
-    assert list(groups) == ["Top Roles", "Dallas", "Austin", "Remote", "Discarded", "Expired"]
+    assert list(groups) == ["Top Roles", "DFW", "Denton", "Plano / Frisco", "Remote", "Austin / Houston", "Discarded", "Expired"]
     assert groups["Top Roles"] == []
     assert groups["Discarded"][0] == scored
 
@@ -463,6 +464,10 @@ def test_dashboard_renders_analytics_view():
     assert "display: block;\n        height: 100%;" in html
     assert "Data Cleanup Queue" in html
     assert "Dallas-Fort Worth" in html
+    assert "Plano / Frisco / Richardson" in html
+    assert "Fort Worth / Irving / Addison" in html
+    assert "Austin / Houston" in html
+    assert "function matchesLocation(row, locationValue)" in html
     assert "Partnerships / BD" in html
     assert "geo-map" in html
     assert "us-map-svg" in html
@@ -525,5 +530,5 @@ def test_digest_groups_expired_roles_separately():
     groups = _group_jobs([expired])
 
     assert groups["Top Roles"] == []
-    assert groups["Austin"] == []
+    assert groups["Austin / Houston"] == []
     assert groups["Expired"] == [expired]

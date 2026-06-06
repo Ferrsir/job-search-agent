@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import json
+import re
 from datetime import date
 from typing import Any
 from urllib.parse import parse_qs, quote, urljoin, urlparse
@@ -28,6 +29,57 @@ JOB_HINTS = (
     "ashbyhq.com",
     "workdayjobs.com",
     "pinpointhq.com",
+)
+
+GENERIC_CAREER_TITLES = {
+    "career",
+    "careers",
+    "job",
+    "jobs",
+    "open jobs",
+    "open roles",
+    "open positions",
+    "opportunities",
+    "students",
+    "students & graduates",
+    "students and graduates",
+    "careers and internships",
+    "careers and internships students graduates",
+    "careers and internships students and graduates",
+    "careers and internships: students & graduates",
+    "early careers",
+    "student programs",
+    "internships",
+    "campus recruiting",
+    "search jobs",
+    "view jobs",
+    "all jobs",
+}
+
+SPECIFIC_ROLE_TERMS = (
+    "analyst",
+    "associate",
+    "intern",
+    "internship",
+    "investment",
+    "banking",
+    "private equity",
+    "search fund",
+    "valuation",
+    "m&a",
+    "finance",
+    "financial",
+    "research",
+    "corporate",
+    "wealth",
+    "asset",
+    "venture",
+    "manager",
+    "lead",
+    "director",
+    "specialist",
+    "coordinator",
+    "consultant",
 )
 
 USER_AGENT = "job-search-agent/0.1"
@@ -85,6 +137,8 @@ def _discover_from_source(source_url: str, fetcher, max_links: int) -> list[JobR
         label = collapse_space(link.get_text(" "))
         haystack = f"{href} {label}".lower()
         if not label or not any(hint in haystack for hint in JOB_HINTS):
+            continue
+        if _is_generic_career_link(label, href):
             continue
         if href in seen:
             continue
@@ -391,7 +445,8 @@ def _record_from_structured_job(
 def _company_name(source_url: str, soup: BeautifulSoup) -> str:
     title = collapse_space(soup.title.get_text(" ")) if soup.title else ""
     if title:
-        return title.split("|")[0].split("-")[0].strip()
+        cleaned = title.split("|")[0].split("-")[0].strip()
+        return _strip_generic_company_suffix(cleaned)
     return source_url.split("//", 1)[-1].split("/", 1)[0]
 
 
@@ -400,6 +455,35 @@ def _title_from_label(label: str) -> str:
     if len(cleaned) > 120:
         return "Needs manual review"
     return cleaned or "Needs manual review"
+
+
+def _is_generic_career_link(label: str, href: str) -> bool:
+    normalized_label = _normalize_title(label)
+    if normalized_label in GENERIC_CAREER_TITLES:
+        return True
+    if any(term in normalized_label for term in SPECIFIC_ROLE_TERMS):
+        return False
+    path = " ".join(part for part in urlparse(href).path.lower().split("/") if part)
+    normalized_path = _normalize_title(path)
+    if normalized_path in GENERIC_CAREER_TITLES:
+        return True
+    generic_words = {"career", "careers", "job", "jobs", "students", "graduates", "internships", "programs", "search"}
+    label_words = set(normalized_label.split())
+    return bool(label_words) and label_words.issubset(generic_words)
+
+
+def _normalize_title(value: str) -> str:
+    value = value.replace("&", " and ")
+    value = collapse_space(" ".join(re.findall(r"[a-z0-9]+", value.lower())))
+    return value
+
+
+def _strip_generic_company_suffix(value: str) -> str:
+    cleaned = value.strip()
+    for suffix in (" Careers", " Jobs", " Job Openings", " Career Center"):
+        if cleaned.lower().endswith(suffix.lower()):
+            return cleaned[: -len(suffix)].strip() or cleaned
+    return cleaned
 
 
 def _title_from_url(url: str) -> str:

@@ -660,11 +660,16 @@
             <label for="location-filter">Location</label>
             <select id="location-filter">
               <option value="">All locations</option>
+              <option value="dfw">DFW</option>
+              <option value="denton">Denton</option>
+              <option value="dallas">Dallas</option>
+              <option value="plano-frisco">Plano / Frisco / Richardson</option>
+              <option value="fort-worth-irving-addison">Fort Worth / Irving / Addison</option>
+              <option value="austin-houston">Austin / Houston</option>
               <option value="austin">Austin</option>
-              <option value="dallas">Dallas-Fort Worth</option>
+              <option value="houston">Houston</option>
               <option value="remote">Remote</option>
               <option value="texas">Texas</option>
-              <option value="washington">Washington, DC</option>
             </select>
           </div>
           <div class="control">
@@ -1248,6 +1253,30 @@
         syncCategoryTabs(view === "this-week" ? panelTarget : "");
       }
 
+      const locationAliases = {
+        dfw: ["dfw", "dallas", "fort worth", "plano", "frisco", "richardson", "irving", "addison", "denton"],
+        denton: ["denton"],
+        dallas: ["dallas"],
+        "plano-frisco": ["plano", "frisco", "richardson"],
+        "fort-worth-irving-addison": ["fort worth", "irving", "addison"],
+        "austin-houston": ["austin", "houston"],
+        austin: ["austin"],
+        houston: ["houston"],
+        remote: ["remote"],
+        texas: ["tx", "texas", "dfw", "dallas", "fort worth", "plano", "frisco", "richardson", "irving", "addison", "denton", "austin", "houston"]
+      };
+
+      function matchesLocation(row, locationValue) {
+        if (!locationValue) return true;
+        const fields = [
+          row.dataset.location || "",
+          row.dataset.geography || "",
+          row.dataset.search || ""
+        ].join(" ").toLowerCase();
+        const aliases = locationAliases[locationValue] || [locationValue];
+        return aliases.some((alias) => fields.includes(alias));
+      }
+
       function matchesCurrentFilters(row, viewKind) {
         const minScore = Number(scoreFilter.value);
         const location = locationFilter.value;
@@ -1263,11 +1292,11 @@
               : viewKind === "category"
                 ? rowFeedback !== "wrong" && !isStaticDiscarded
                 : true;
-        const matchesLocation = !location || row.dataset.location.includes(location);
+        const matchesLocationFilter = matchesLocation(row, location);
         const matchesScore = Number(row.dataset.score) >= minScore;
         const matchesFeedback = !feedbackValue || (feedbackValue === "unrated" ? !rowFeedback : rowFeedback === feedbackValue);
         const matchesText = !text || row.dataset.search.includes(text);
-        return matchesView && matchesLocation && matchesScore && matchesFeedback && matchesText;
+        return matchesView && matchesLocationFilter && matchesScore && matchesFeedback && matchesText;
       }
 
       function analyticsDatasetKey(type) {

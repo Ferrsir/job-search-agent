@@ -71,17 +71,16 @@ def save_digest(html: str, output_dir: Path, filename: str = "weekly_digest.html
 def _group_jobs(scored_jobs: list[ScoredJob]) -> dict[str, list[ScoredJob]]:
     buckets: dict[str, list[ScoredJob]] = {
         "Top Roles": [],
-        "Dallas": [],
-        "Austin": [],
+        "DFW": [],
+        "Denton": [],
+        "Plano / Frisco": [],
         "Remote": [],
+        "Austin / Houston": [],
         "Discarded": [],
         "Expired": [],
     }
     mapping = [
         (Classification.APPLY_NOW, "Top Roles"),
-        (Classification.DALLAS_MATCH, "Dallas"),
-        (Classification.AUSTIN_MATCH, "Austin"),
-        (Classification.REMOTE_MATCH, "Remote"),
         (Classification.REJECTED_NOTABLE, "Discarded"),
         (Classification.AUTO_REJECT, "Discarded"),
         (Classification.EXPIRED, "Expired"),
@@ -94,6 +93,8 @@ def _group_jobs(scored_jobs: list[ScoredJob]) -> dict[str, list[ScoredJob]]:
         for label, bucket in mapping:
             if label in scored.labels:
                 buckets[bucket].append(scored)
+        for bucket in _preferred_location_buckets(scored.job.location):
+            buckets[bucket].append(scored)
     if len(buckets["Top Roles"]) < 5:
         seen_top_roles = {id(scored) for scored in buckets["Top Roles"]}
         supplements = [
@@ -105,6 +106,22 @@ def _group_jobs(scored_jobs: list[ScoredJob]) -> dict[str, list[ScoredJob]]:
             and id(scored) not in seen_top_roles
         ]
         buckets["Top Roles"] = [*buckets["Top Roles"], *supplements][:5]
+    return buckets
+
+
+def _preferred_location_buckets(location: str) -> list[str]:
+    loc = location.lower()
+    buckets: list[str] = []
+    if any(term in loc for term in ("dallas", "fort worth", "dfw", "irving", "addison", "richardson", "plano", "frisco", "denton")):
+        buckets.append("DFW")
+    if "denton" in loc:
+        buckets.append("Denton")
+    if any(term in loc for term in ("plano", "frisco", "richardson")):
+        buckets.append("Plano / Frisco")
+    if "remote" in loc:
+        buckets.append("Remote")
+    if "austin" in loc or "houston" in loc:
+        buckets.append("Austin / Houston")
     return buckets
 
 
@@ -155,12 +172,14 @@ def _role_phrase(roles: list[ScoredJob]) -> str:
 def _location_phrase(top_roles: list[ScoredJob]) -> str:
     locations = [scored.job.location for scored in top_roles if scored.job.location]
     joined = " ".join(locations).lower()
-    if "austin" in joined and "dallas" in joined:
-        return "The pattern is Texas-forward, with both Austin and Dallas showing up in the highest-signal roles."
+    if ("austin" in joined or "houston" in joined) and any(term in joined for term in ("dallas", "fort worth", "dfw", "plano", "frisco", "denton")):
+        return "The pattern is Texas-forward, with DFW first and Austin or Houston showing up as secondary markets."
     if "austin" in joined:
-        return "The best opportunities are leaning Austin, so prioritize role fit and hiring-manager access there."
-    if "dallas" in joined or "fort worth" in joined or "dfw" in joined:
-        return "The best opportunities are leaning Dallas, with defense and operations signals worth watching closely."
+        return "Austin is showing up as a secondary Texas market, so prioritize it when the finance signal is strong."
+    if "houston" in joined:
+        return "Houston is showing up as a secondary Texas market, so prioritize it when the finance signal is strong."
+    if any(term in joined for term in ("dallas", "fort worth", "dfw", "plano", "frisco", "denton", "irving", "addison", "richardson")):
+        return "The best opportunities are leaning DFW, which fits the local-first search strategy."
     if "remote" in joined:
         return "Remote flexibility is the main practical advantage, so prioritize roles with clear strategic ownership."
     return "Use these as the week’s priority review set before spending time on lower-fit listings."

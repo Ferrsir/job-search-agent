@@ -31,9 +31,32 @@ def test_discover_public_jobs_from_career_page_links():
 
     assert len(jobs) == 1
     assert jobs[0].title == "Strategic Partnerships Manager"
-    assert jobs[0].company == "Orbit Works Careers"
+    assert jobs[0].company == "Orbit Works"
     assert jobs[0].url == "https://orbit.example/jobs/strategic-partnerships"
     assert jobs[0].source == "Public career page"
+
+
+def test_discover_public_jobs_skips_generic_career_landing_links():
+    def fake_get(url, timeout, headers):
+        return FakeResponse(
+            text="""
+            <html>
+              <head><title>MegaBank Careers</title></head>
+              <body>
+                <a href="/careers">Careers</a>
+                <a href="/careers/students-and-graduates">Careers and Internships: Students &amp; Graduates</a>
+                <a href="/search-jobs">Search jobs</a>
+                <a href="/jobs/investment-banking-intern-dallas">Investment Banking Intern Dallas</a>
+              </body>
+            </html>
+            """
+        )
+
+    jobs = discover_public_jobs(["https://megabank.example/careers"], fetcher=fake_get)
+
+    assert len(jobs) == 1
+    assert jobs[0].title == "Investment Banking Intern Dallas"
+    assert jobs[0].company == "MegaBank"
 
 
 def test_discover_jobs_from_schema_org_jobposting_json_ld():

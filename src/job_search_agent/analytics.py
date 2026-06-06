@@ -58,6 +58,9 @@ TARGET_JOB_TYPES = {
 GEO_POINT_COORDS = {
     "Austin": (45, 69),
     "Dallas-Fort Worth": (47, 62),
+    "Denton": (47, 60),
+    "Plano / Frisco": (48, 61),
+    "Houston": (49, 76),
     "Remote": (28, 35),
     "Washington, DC": (77, 51),
     "Other US": (55, 48),
@@ -67,6 +70,9 @@ GEO_POINT_COORDS = {
 CITY_POINT_COORDS = {
     "Austin": (50, 75),
     "Dallas-Fort Worth": (49, 68),
+    "Denton": (48, 65),
+    "Plano / Frisco": (50, 66),
+    "Houston": (51, 81),
     "Washington, DC": (79, 53),
     "San Francisco Bay Area": (15, 53),
     "Los Angeles": (17, 67),
@@ -79,6 +85,9 @@ CITY_POINT_COORDS = {
 CITY_GEO_COORDS = {
     "Austin": (-97.7431, 30.2672),
     "Dallas-Fort Worth": (-97.0403, 32.8998),
+    "Denton": (-97.1331, 33.2148),
+    "Plano / Frisco": (-96.8236, 33.1032),
+    "Houston": (-95.3698, 29.7604),
     "Washington, DC": (-77.0369, 38.9072),
     "San Francisco Bay Area": (-122.05, 37.48),
     "Los Angeles": (-118.2437, 34.0522),
@@ -418,7 +427,13 @@ def _geography(location: str) -> str:
         return "Needs cleanup"
     if "austin" in loc:
         return "Austin"
-    if "dallas" in loc or "fort worth" in loc or "dfw" in loc:
+    if "houston" in loc:
+        return "Houston"
+    if "denton" in loc:
+        return "Denton"
+    if "plano" in loc or "frisco" in loc or "richardson" in loc:
+        return "Plano / Frisco"
+    if "dallas" in loc or "fort worth" in loc or "dfw" in loc or "irving" in loc or "addison" in loc:
         return "Dallas-Fort Worth"
     if "remote" in loc:
         return "Remote"
@@ -441,7 +456,13 @@ def _city_bucket(location: str) -> str:
         return "Remote"
     if "austin" in loc:
         return "Austin"
-    if "dallas" in loc or "fort worth" in loc or "dfw" in loc:
+    if "houston" in loc:
+        return "Houston"
+    if "denton" in loc:
+        return "Denton"
+    if "plano" in loc or "frisco" in loc or "richardson" in loc:
+        return "Plano / Frisco"
+    if "dallas" in loc or "fort worth" in loc or "dfw" in loc or "irving" in loc or "addison" in loc:
         return "Dallas-Fort Worth"
     if "washington" in loc or re.search(r"\bd\.?c\.?\b", loc):
         return "Washington, DC"
