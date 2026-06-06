@@ -29,8 +29,8 @@ jobs:
       - name: Run job agent
         env:
           DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-          GMAIL_TO: ${{ secrets.GMAIL_TO }}
+          GOOGLE_SHEET_ID: "1gmg8EV3FUerg8oeQoAVq1LoATvg4ixgmeVtqWLp8FhI"
+          GMAIL_TO: "ferrislavigne@gmail.com"
           GMAIL_SEARCH_QUERY: 'label:"Job Search Agent" newer_than:14d'
           FEEDBACK_EXPORT_PATH: ${{ vars.FEEDBACK_EXPORT_PATH }}
           ENABLE_PUBLIC_SOURCE_SEARCH: "true"

@@ -29,7 +29,7 @@ jobs:
         run: pytest
       - name: Render Sheet-backed dashboard
         env:
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_SHEET_ID: "1gmg8EV3FUerg8oeQoAVq1LoATvg4ixgmeVtqWLp8FhI"
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           LINKEDIN_DATA_DIRS: ${{ vars.LINKEDIN_DATA_DIRS }}
           JOB_SEARCH_USER_FIRST_NAME: "Ferris"
