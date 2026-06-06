@@ -31,21 +31,21 @@ jobs:
           DRY_RUN: ${{ vars.DRY_RUN || 'true' }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           GMAIL_TO: ${{ secrets.GMAIL_TO }}
-          GMAIL_SEARCH_QUERY: ${{ vars.GMAIL_SEARCH_QUERY }}
+          GMAIL_SEARCH_QUERY: 'label:"Job Search Agent" newer_than:14d'
           FEEDBACK_EXPORT_PATH: ${{ vars.FEEDBACK_EXPORT_PATH }}
-          ENABLE_PUBLIC_SOURCE_SEARCH: ${{ vars.ENABLE_PUBLIC_SOURCE_SEARCH || 'false' }}
-          PUBLIC_SOURCE_URLS: ${{ vars.PUBLIC_SOURCE_URLS }}
+          ENABLE_PUBLIC_SOURCE_SEARCH: "true"
+          PUBLIC_SOURCE_URLS: "https://www.deloitte.com/us/en/careers/internships.html,https://www.pwc.com/us/en/careers/entry-level/internships.html,https://www.ey.com/en_us/careers/student-entry-level-programs,https://www.kpmguscareers.com/early-career/program/,https://www.jpmorganchase.com/careers/explore-opportunities/students-and-graduates,https://www.goldmansachs.com/careers/students,https://www.morganstanley.com/campus,https://careers.bankofamerica.com/en-us/students/programs,https://www.wellsfargojobs.com/en/early-careers/,https://careers.td.com/student-new-grads/early-talent-programs/,https://hl.com/careers/early-careers/,https://www.raymondjames.com/careers/students-and-recent-grads/internships,https://www.stout.com/en/careers/students-early-career,https://www.cbiz.com/careers/students-recent-graduates,https://rsmus.com/careers/students/internships-at-rsm.html,https://www.texascapitalbank.com/who-we-are/careers/students-and-graduates,https://www.hilltop.com/careers/student-intern/,https://careers.comerica.com/us/en/university-recruiting-"
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           GOOGLE_OAUTH_TOKEN_JSON: ${{ secrets.GOOGLE_OAUTH_TOKEN_JSON }}
           LINKEDIN_DATA_DIRS: ${{ vars.LINKEDIN_DATA_DIRS }}
-          JOB_SEARCH_USER_FIRST_NAME: ${{ vars.JOB_SEARCH_USER_FIRST_NAME }}
-          JOB_SEARCH_USER_FULL_NAME: ${{ vars.JOB_SEARCH_USER_FULL_NAME }}
-          JOB_SEARCH_USER_INITIALS: ${{ vars.JOB_SEARCH_USER_INITIALS }}
-          JOB_SEARCH_SITE_TITLE: ${{ vars.JOB_SEARCH_SITE_TITLE }}
-          JOB_SEARCH_SITE_SUBTITLE: ${{ vars.JOB_SEARCH_SITE_SUBTITLE }}
-          JOB_SEARCH_PROFILE_SUMMARY: ${{ vars.JOB_SEARCH_PROFILE_SUMMARY }}
-          JOB_SEARCH_DASHBOARD_URL: ${{ vars.JOB_SEARCH_DASHBOARD_URL }}
-          JOB_SEARCH_APPLICATION_CONTEXT: ${{ vars.JOB_SEARCH_APPLICATION_CONTEXT }}
+          JOB_SEARCH_USER_FIRST_NAME: "Ferris"
+          JOB_SEARCH_USER_FULL_NAME: "Ferris Jagger-James Childress LaVigne"
+          JOB_SEARCH_USER_INITIALS: "FL"
+          JOB_SEARCH_SITE_TITLE: "Ferris' Career Center"
+          JOB_SEARCH_SITE_SUBTITLE: "Career Center"
+          JOB_SEARCH_PROFILE_SUMMARY: "TAMS/SMU student interested in investment banking, private equity, financial analysis, and finance-focused internships involving company research, modeling, valuation, and due diligence."
+          JOB_SEARCH_DASHBOARD_URL: "https://Ferrsir.github.io/job-search-agent/"
+          JOB_SEARCH_APPLICATION_CONTEXT: "Use Ferris's uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials."
         run: job-search-agent
       - name: Upload HTML rundown artifact
         uses: actions/upload-artifact@v4

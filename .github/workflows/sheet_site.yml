@@ -32,14 +32,14 @@ jobs:
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           LINKEDIN_DATA_DIRS: ${{ vars.LINKEDIN_DATA_DIRS }}
-          JOB_SEARCH_USER_FIRST_NAME: ${{ vars.JOB_SEARCH_USER_FIRST_NAME }}
-          JOB_SEARCH_USER_FULL_NAME: ${{ vars.JOB_SEARCH_USER_FULL_NAME }}
-          JOB_SEARCH_USER_INITIALS: ${{ vars.JOB_SEARCH_USER_INITIALS }}
-          JOB_SEARCH_SITE_TITLE: ${{ vars.JOB_SEARCH_SITE_TITLE }}
-          JOB_SEARCH_SITE_SUBTITLE: ${{ vars.JOB_SEARCH_SITE_SUBTITLE }}
-          JOB_SEARCH_PROFILE_SUMMARY: ${{ vars.JOB_SEARCH_PROFILE_SUMMARY }}
-          JOB_SEARCH_DASHBOARD_URL: ${{ vars.JOB_SEARCH_DASHBOARD_URL }}
-          JOB_SEARCH_APPLICATION_CONTEXT: ${{ vars.JOB_SEARCH_APPLICATION_CONTEXT }}
+          JOB_SEARCH_USER_FIRST_NAME: "Ferris"
+          JOB_SEARCH_USER_FULL_NAME: "Ferris Jagger-James Childress LaVigne"
+          JOB_SEARCH_USER_INITIALS: "FL"
+          JOB_SEARCH_SITE_TITLE: "Ferris' Career Center"
+          JOB_SEARCH_SITE_SUBTITLE: "Career Center"
+          JOB_SEARCH_PROFILE_SUMMARY: "TAMS/SMU student interested in investment banking, private equity, financial analysis, and finance-focused internships involving company research, modeling, valuation, and due diligence."
+          JOB_SEARCH_DASHBOARD_URL: "https://Ferrsir.github.io/job-search-agent/"
+          JOB_SEARCH_APPLICATION_CONTEXT: "Use Ferris's uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials."
         run: job-search-site
       - name: Upload dashboard artifact
         uses: actions/upload-artifact@v4
