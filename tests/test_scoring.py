@@ -5,7 +5,7 @@ from job_search_agent.models import Classification, JobRecord
 from job_search_agent.scoring import score_job
 
 
-def test_score_prefers_strategic_space_austin_role():
+def test_score_keeps_strategic_manager_role_as_warm_but_not_top_student_fit():
     job = JobRecord(
         title="Strategic Partnerships Manager",
         company="Orbit Works",
@@ -18,8 +18,8 @@ def test_score_prefers_strategic_space_austin_role():
 
     scored = score_job(job)
 
-    assert scored.total_score >= 75
-    assert Classification.APPLY_NOW in scored.labels
+    assert scored.total_score >= 70
+    assert Classification.WARM_INTRO_FIRST in scored.labels
     assert Classification.AUSTIN_MATCH in scored.labels
     assert scored.destination_tab == "Active Roles"
 
@@ -168,3 +168,55 @@ def test_preference_terms_adjust_score():
 
     assert scored.score_breakdown["Feedback calibration"] == 4
     assert any("Preference match" in note for note in scored.rationale)
+
+
+def test_freshman_sophomore_finance_internship_scores_as_strong_fit():
+    job = JobRecord(
+        title="Finance Intern",
+        company="Texas Capital",
+        location="Dallas, TX",
+        url="https://example.com/finance-intern",
+        source="LinkedIn",
+        source_email_id="freshman-finance",
+        raw_text=(
+            "Summer finance internship for freshman and sophomore undergraduate students. "
+            "Corporate finance, financial analysis, valuation, and company research. $20-$25/hour."
+        ),
+    )
+
+    scored = score_job(job)
+
+    assert scored.score_breakdown["Role fit"] >= 20
+    assert scored.score_breakdown["Student fit"] == 18
+    assert scored.score_breakdown["Seniority fit"] > 0
+    assert Classification.APPLY_NOW in scored.labels
+    assert scored.destination_tab == "Active Roles"
+
+
+def test_graduate_or_rising_senior_role_is_penalized_below_student_friendly_internship():
+    student_job = JobRecord(
+        title="Investment Analyst Intern",
+        company="Search Fund Partners",
+        location="Plano, TX",
+        url="https://example.com/student",
+        source="Handshake",
+        source_email_id="student",
+        raw_text="Freshman or sophomore undergraduate students welcome. Investment research and valuation internship.",
+    )
+    advanced_job = JobRecord(
+        title="Investment Banking Summer Analyst",
+        company="Prestige Bank",
+        location="Dallas, TX",
+        url="https://example.com/advanced",
+        source="LinkedIn",
+        source_email_id="advanced",
+        raw_text="For rising senior or graduate student candidates. MBA or completed bachelor's degree preferred.",
+    )
+
+    student_scored = score_job(student_job)
+    advanced_scored = score_job(advanced_job)
+
+    assert advanced_scored.score_breakdown["Student fit"] < 0
+    assert advanced_scored.score_breakdown["Seniority fit"] < 0
+    assert student_scored.total_score > advanced_scored.total_score
+    assert any("senior, graduate" in note for note in advanced_scored.rationale)

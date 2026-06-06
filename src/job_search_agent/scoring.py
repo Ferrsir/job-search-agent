@@ -20,6 +20,24 @@ from job_search_agent.models import Classification, JobRecord, ScoredJob
 
 
 ROLE_KEYWORDS = {
+    "investment banking intern": 25,
+    "private equity intern": 25,
+    "search fund intern": 25,
+    "financial analyst intern": 24,
+    "investment analyst intern": 24,
+    "finance intern": 23,
+    "valuation intern": 23,
+    "corporate finance intern": 23,
+    "m&a intern": 23,
+    "equity research intern": 23,
+    "wealth management intern": 21,
+    "asset management intern": 21,
+    "venture capital intern": 21,
+    "analyst intern": 20,
+    "summer analyst": 22,
+    "finance internship": 22,
+    "business internship": 18,
+    "internship": 12,
     "strategic partnerships": 25,
     "partnerships": 23,
     "venture": 23,
@@ -40,6 +58,20 @@ ROLE_KEYWORDS = {
 }
 
 SECTOR_KEYWORDS = {
+    "investment banking": 20,
+    "private equity": 20,
+    "search fund": 20,
+    "valuation": 19,
+    "m&a": 19,
+    "corporate finance": 18,
+    "financial analysis": 18,
+    "equity research": 18,
+    "asset management": 17,
+    "wealth management": 17,
+    "venture capital": 17,
+    "fintech": 15,
+    "commercial banking": 14,
+    "regional bank": 13,
     "space": 20,
     "aerospace": 18,
     "venture": 18,
@@ -70,8 +102,6 @@ WARM_PATH_KEYWORDS = {
 }
 
 AUTO_REJECT_PATTERNS = [
-    r"\bintern(ship)?\b",
-    r"\bfellow(ship)?\b",
     r"\bentry[- ]level admin\b",
     r"\bsoftware engineer\b",
     r"\b(engineer|engineering manager|engineering lead|engineering director)\b",
@@ -108,6 +138,7 @@ def score_job(
     career_upside = _score_career_upside(haystack, role_fit, sector_fit)
     compensation = _score_compensation(haystack)
     seniority = _score_seniority(haystack)
+    student_fit = _score_student_fit(haystack)
     practicality = _score_practicality(job, haystack)
     technical_mismatch = _score_technical_mismatch(job, haystack)
 
@@ -119,6 +150,7 @@ def score_job(
         "Career upside": career_upside,
         "Compensation fit": compensation,
         "Seniority fit": seniority,
+        "Student fit": student_fit,
         "Application practicality": practicality,
         "Technical mismatch": technical_mismatch,
     }
@@ -177,12 +209,16 @@ def _keyword_score(text: str, weighted_keywords: dict[str, int], max_score: int)
 
 def _score_location(location: str) -> int:
     loc = location.lower()
-    if "austin" in loc:
+    if any(city in loc for city in ("denton", "plano", "frisco", "richardson", "irving", "addison")):
         return 15
-    if "dallas" in loc or "fort worth" in loc or "dfw" in loc:
-        return 14
-    if "remote" in loc:
+    if "austin" in loc:
         return 13
+    if "houston" in loc:
+        return 12
+    if "dallas" in loc or "fort worth" in loc or "dfw" in loc:
+        return 15
+    if "remote" in loc:
+        return 12
     if "texas" in loc or "tx" in loc:
         return 11
     if "washington" in loc or re.search(r"\bdc\b", loc):
@@ -202,14 +238,24 @@ def _score_warm_intro(job: JobRecord, text: str, warm_companies: set[str]) -> in
 
 
 def _score_career_upside(text: str, role_fit: int, sector_fit: int) -> int:
-    if "senior" in text or "principal" in text or role_fit >= 22 and sector_fit >= 16:
+    if _looks_student_friendly(text) and role_fit >= 18:
         return 10
+    if _looks_too_senior(text) or role_fit >= 22 and sector_fit >= 16:
+        return 8
     if role_fit >= 18 and sector_fit >= 12:
         return 8
     return 5
 
 
 def _score_compensation(text: str) -> int:
+    hourly = re.search(r"\$?(\d{2})\s*(?:-|–|to)\s*\$?(\d{2})\s*/?\s*(?:hour|hr)", text)
+    if hourly:
+        low = int(hourly.group(1))
+        high = int(hourly.group(2))
+        if low >= 18 and high <= 35:
+            return 6
+        if high >= 18:
+            return 4
     salary = re.search(r"\$?(\d{2,3})[kK]", text)
     if salary and int(salary.group(1)) >= 100:
         return 5
@@ -219,16 +265,38 @@ def _score_compensation(text: str) -> int:
 
 
 def _score_seniority(text: str) -> int:
-    if re.search(r"\b(intern|fellow|entry[- ]level)\b", text):
-        return 0
-    if re.search(r"\b(manager|lead|senior|principal|director|associate)\b", text):
-        return 5
+    if _looks_too_advanced_for_ferris(text):
+        return -12
+    if _looks_student_friendly(text):
+        return 12
+    if re.search(r"\b(intern|internship|fellow|fellowship|entry[- ]level|campus|student)\b", text):
+        return 8
+    if re.search(r"\b(manager|lead|senior|principal|director)\b", text):
+        return -8
+    if re.search(r"\bassociate\b", text):
+        return 3
     return 3
+
+
+def _score_student_fit(text: str) -> int:
+    if _looks_too_advanced_for_ferris(text):
+        return -18
+    if re.search(r"\b(freshman|freshmen|first[- ]year|1st[- ]year|sophomore|second[- ]year|2nd[- ]year|underclass)\b", text):
+        return 18
+    if re.search(r"\b(high school|incoming college|current student|currently enrolled|undergraduate student|campus)\b", text):
+        return 14
+    if _looks_student_friendly(text) and _looks_business_finance(text):
+        return 14
+    if re.search(r"\b(intern|internship|summer analyst|early career|student program|students and graduates)\b", text):
+        return 8
+    return 0
 
 
 def _score_practicality(job: JobRecord, text: str) -> int:
     if "active security clearance" in text or "u.s. citizen" in text:
         return 0
+    if _looks_completed_degree_required(text):
+        return 1
     if job.url:
         return 5
     return 2
@@ -272,11 +340,49 @@ def wrong_reason_adjustment(
 
 
 def _looks_too_senior(text: str) -> bool:
-    return bool(re.search(r"\b(vp|vice president|chief|c-suite|executive|head of|principal|director|staff)\b", text))
+    return bool(re.search(r"\b(vp|vice president|chief|c-suite|executive|head of|principal|director|staff|senior manager)\b", text))
 
 
 def _looks_too_junior(text: str) -> bool:
     return bool(re.search(r"\b(intern|internship|fellow|fellowship|entry[- ]level|junior|assistant|coordinator)\b", text))
+
+
+def _looks_student_friendly(text: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(intern|internship|summer analyst|student|students|campus|early career|undergraduate|freshman|freshmen|first[- ]year|sophomore|second[- ]year|currently enrolled)\b",
+            text,
+        )
+    )
+
+
+def _looks_business_finance(text: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(finance|financial|investment|banking|private equity|search fund|valuation|m&a|corporate finance|equity research|wealth management|asset management|venture capital|business|accounting|advisory|consulting)\b",
+            text,
+        )
+    )
+
+
+def _looks_completed_degree_required(text: str) -> bool:
+    return bool(
+        re.search(
+            r"\b(bachelor'?s degree required|completed bachelor'?s|degree required|graduate degree|required graduation date|must have graduated)\b",
+            text,
+        )
+    )
+
+
+def _looks_too_advanced_for_ferris(text: str) -> bool:
+    if _looks_too_senior(text):
+        return True
+    return bool(
+        re.search(
+            r"\b(rising senior|senior standing|juniors? and seniors?|class of 202[6-8]|mba|master'?s|graduate student|graduate degree|phd|postgraduate|completed bachelor'?s|bachelor'?s degree required|must have graduated)\b",
+            text,
+        )
+    )
 
 
 def _location_matches_avoid(location: str, avoid_terms: tuple[str, ...]) -> bool:
@@ -342,4 +448,6 @@ def _rationale(breakdown: dict[str, int], labels: list[Classification]) -> list[
     rationale = [f"{name}: {score}" for name, score in top]
     if breakdown.get("Technical mismatch", 0) < 0:
         rationale.append("Penalty: role appears more technical than target profile")
+    if breakdown.get("Seniority fit", 0) < 0 or breakdown.get("Student fit", 0) < 0:
+        rationale.append("Penalty: role appears aimed at senior, graduate, or completed-degree candidates")
     return rationale + [f"Label: {label}" for label in labels]
