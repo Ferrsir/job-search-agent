@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>{{ user_profile.site_title }} Weekly Brief</title>
+  </head>
+  <body style="margin:0; padding:0; background:#161210; color:#f4ede1; font-family:'Hanken Grotesk', Arial, Helvetica, sans-serif;">
+    <div style="display:none; max-height:0; overflow:hidden; opacity:0; color:#161210;">{{ weekly_takeaway }}</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#161210; padding:36px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:680px; background:#221d18; border:1px solid #382f28; border-radius:22px; overflow:hidden;">
+
+            <!-- masthead -->
+            <tr>
+              <td style="padding:20px 28px; border-bottom:1px solid #2b251f; background:#1a1612;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td valign="middle">
+                      <table role="presentation" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td style="width:42px; height:42px;">
+                            <img src="{{ user_profile.dashboard_url.rstrip('/') }}/assets/logo-comet-icon-1024.png" width="42" height="42" alt="" style="display:block; width:42px; height:42px; border-radius:12px;">
+                          </td>
+                          <td style="padding-left:13px;">
+                            <div style="font-family:Georgia,'Times New Roman',serif; font-size:23px; line-height:1; color:#f4ede1;">{{ user_profile.first_name }}'s</div>
+                            <div style="margin-top:6px; font-size:9px; letter-spacing:3.4px; text-transform:uppercase; color:#9c9081; font-family:'JetBrains Mono',monospace;">{{ user_profile.site_subtitle }}</div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                    <td align="right" valign="middle">
+                      <span style="display:inline-block; padding:6px 12px; border:1px solid #4a5f15; border-radius:999px; font-size:10px; letter-spacing:2.4px; text-transform:uppercase; color:#c9ec57; font-weight:700; font-family:'JetBrains Mono',monospace;">Weekly Brief</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- hero -->
+            <tr>
+              <td style="padding:34px 32px 26px;">
+                <div style="display:inline-block; padding:7px 14px; border-radius:999px; background:rgba(201,236,87,0.16); border:1px solid rgba(201,236,87,0.4); color:#c9ec57; font-size:10px; letter-spacing:2.6px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace;">This week's shortlist</div>
+                <h1 style="margin:18px 0 12px; font-size:42px; line-height:1.0; color:#f4ede1; font-weight:800; letter-spacing:-1px; font-family:'Bricolage Grotesque',Arial,sans-serif;">Morning, {{ user_profile.first_name }}<span style="color:#ee7d66;">.</span></h1>
+                <p style="margin:0; max-width:560px; color:#cbc1b2; font-size:17px; line-height:1.5;">{{ weekly_takeaway }}</p>
+              </td>
+            </tr>
+
+            <!-- stat row -->
+            <tr>
+              <td style="padding:0 32px 6px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td width="33%" valign="top" style="padding:14px 16px; background:#1a1612; border:1px solid #2b251f; border-radius:14px;">
+                      <div style="font-size:30px; line-height:1; color:#ee7d66; font-weight:800; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ total }}</div>
+                      <div style="padding-top:8px; color:#9c9081; font-size:10px; letter-spacing:2.4px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace;">Listings read</div>
+                    </td>
+                    <td width="12"></td>
+                    <td width="33%" valign="top" style="padding:14px 16px; background:#1a1612; border:1px solid #2b251f; border-radius:14px;">
+                      <div style="font-size:30px; line-height:1; color:#c9ec57; font-weight:800; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ groups.get("Top Roles", [])|length }}</div>
+                      <div style="padding-top:8px; color:#9c9081; font-size:10px; letter-spacing:2.4px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace;">Top roles</div>
+                    </td>
+                    <td width="12"></td>
+                    <td width="33%" valign="top" style="padding:14px 16px; background:#1a1612; border:1px solid #2b251f; border-radius:14px;">
+                      <div style="font-size:30px; line-height:1; color:#56b6bd; font-weight:800; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ groups.get("Austin", [])|length + groups.get("Dallas", [])|length + groups.get("Remote", [])|length }}</div>
+                      <div style="padding-top:8px; color:#9c9081; font-size:10px; letter-spacing:2.4px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace;">Location signals</div>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            {% set top_roles = newsletter_roles[:5] %}
+            {% if top_roles %}
+            {% set featured = top_roles[0] %}
+            <!-- top pick -->
+            <tr>
+              <td style="padding:24px 32px 8px;">
+                <div style="font-size:10px; letter-spacing:2.6px; text-transform:uppercase; color:#9c9081; font-weight:700; font-family:'JetBrains Mono',monospace; padding-bottom:10px;">Top pick of the week</div>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#2b231d; border:1px solid #ee7d66; border-radius:18px; overflow:hidden;">
+                  <tr>
+                    <td style="padding:22px 24px; border-left:5px solid #ee7d66;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td valign="middle">
+                            <span style="display:inline-block; padding:6px 11px; background:#ee7d66; border-radius:7px; color:#1a1612; font-size:11px; letter-spacing:1.2px; text-transform:uppercase; font-weight:800; font-family:'JetBrains Mono',monospace;">Top pick</span>
+                          </td>
+                          <td align="right" valign="middle">
+                            <span style="display:inline-block; padding:7px 10px; background:rgba(96,200,120,0.18); border:1px solid rgba(96,200,120,0.45); border-radius:7px; color:#75e091; font-size:12px; font-weight:700; font-family:'JetBrains Mono',monospace;">{{ featured.total_score }}% match</span>
+                          </td>
+                        </tr>
+                      </table>
+                      <h2 style="margin:14px 0 7px; font-size:27px; line-height:1.12; color:#f4ede1; font-weight:800; letter-spacing:-0.5px; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ featured.job.title }}</h2>
+                      <div style="font-size:16px; color:#cbc1b2;"><strong style="color:#ee7d66;">{{ featured.job.company }}</strong> &nbsp;/&nbsp; {{ featured.job.location or "Location TBD" }}</div>
+                      <p style="margin:15px 0 16px; color:#e4d8c9; font-size:16px; line-height:1.55;">{{ featured.job.fit_summary or featured.rationale[0] or featured.job.notes }}</p>
+                      {% if featured.job.requirements_summary %}
+                        <p style="margin:0 0 16px; padding-left:13px; border-left:2px solid #56b6bd; color:#cbc1b2; font-size:14px; line-height:1.5;"><strong style="display:block; color:#f4ede1; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:5px; font-family:'JetBrains Mono',monospace;">Main requirements</strong>{{ featured.job.requirements_summary }}</p>
+                      {% endif %}
+                      {% if featured.job.network_summary or featured.job.network_contacts %}
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 16px; background:rgba(86,182,189,0.08); border:1px solid rgba(86,182,189,0.3); border-radius:13px;">
+                          <tr><td style="padding:13px 14px; color:#cbc1b2; font-size:14px; line-height:1.5;">
+                            <strong style="display:block; color:#56b6bd; font-size:10px; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:6px; font-family:'JetBrains Mono',monospace;">First reach context</strong>
+                            {% if featured.job.network_summary %}<div>{{ featured.job.network_summary }}</div>{% endif %}
+                            {% if featured.job.network_contacts %}
+                              <div style="margin-top:8px; color:#f4ede1;">
+                                {% for contact in featured.job.network_contacts %}{{ contact.name }}{% if contact.company %} / {{ contact.company }}{% endif %}{% if contact.reason %} / {{ contact.reason }}{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %}
+                              </div>
+                            {% endif %}
+                          </td></tr>
+                        </table>
+                      {% endif %}
+                      <a href="{{ featured.job.url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:12px 18px; border-radius:999px; background:#ee7d66; color:#1a1612; text-decoration:none; font-size:12px; letter-spacing:1.4px; text-transform:uppercase; font-weight:800; font-family:'JetBrains Mono',monospace;">Open role &rarr;</a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            {% endif %}
+
+            <!-- priority queue -->
+            <tr>
+              <td style="padding:22px 32px 6px;">
+                <div style="font-size:10px; letter-spacing:2.6px; text-transform:uppercase; color:#9c9081; font-weight:700; font-family:'JetBrains Mono',monospace;">Priority queue</div>
+                <h2 style="margin:8px 0 16px; font-size:23px; color:#f4ede1; font-weight:800; letter-spacing:-0.5px; font-family:'Bricolage Grotesque',Arial,sans-serif;">What's worth your week</h2>
+                {% for scored in top_roles[1:] %}
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:0 0 12px; background:#1f1813; border:1px solid #2f2620; border-radius:16px;">
+                    <tr>
+                      <td width="56" valign="top" style="padding:17px 0 17px 18px;">
+                        <div style="width:42px; height:42px; border-radius:11px; background:rgba(238,125,102,0.13); border:1px solid rgba(238,125,102,0.4); color:#ee7d66; text-align:center; line-height:42px; font-size:19px; font-weight:800; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ scored.job.company[:1] }}</div>
+                      </td>
+                      <td valign="top" style="padding:17px 18px 17px 12px;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td valign="top">
+                              <div style="margin:0 0 5px; font-size:11px; letter-spacing:1.4px; text-transform:uppercase; color:#56b6bd; font-weight:700; font-family:'JetBrains Mono',monospace;">{{ scored.total_score }}% match</div>
+                              <a href="{{ scored.job.url }}" target="_blank" rel="noopener noreferrer" style="display:inline-block; font-size:20px; line-height:1.18; color:#f4ede1; font-weight:800; text-decoration:none; letter-spacing:-0.3px; font-family:'Bricolage Grotesque',Arial,sans-serif;">{{ scored.job.title }}</a>
+                              <div style="margin-top:4px; font-size:14px; color:#cbc1b2;"><strong style="color:#ee7d66;">{{ scored.job.company }}</strong> &nbsp;/&nbsp; {{ scored.job.location or "Location TBD" }}</div>
+                            </td>
+                          </tr>
+                        </table>
+                        <p style="margin:11px 0 12px; color:#cbc1b2; font-size:14px; line-height:1.5;">{{ scored.job.fit_summary or scored.rationale[0] or scored.job.notes }}</p>
+                        {% if scored.job.requirements_summary %}
+                          <p style="margin:0 0 12px; padding-left:12px; border-left:2px solid #56b6bd; color:#cbc1b2; font-size:13px; line-height:1.48;"><strong style="display:block; color:#f4ede1; font-size:9px; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:4px; font-family:'JetBrains Mono',monospace;">Main requirements</strong>{{ scored.job.requirements_summary }}</p>
+                        {% endif %}
+                        {% if scored.job.network_summary or scored.job.network_contacts %}
+                          <p style="margin:0 0 12px; padding-left:12px; border-left:2px solid #56b6bd; color:#cbc1b2; font-size:13px; line-height:1.48;"><strong style="display:block; color:#56b6bd; font-size:9px; letter-spacing:1.6px; text-transform:uppercase; margin-bottom:4px; font-family:'JetBrains Mono',monospace;">First reach context</strong>{{ scored.job.network_summary }}{% if scored.job.network_contacts %}<br>{% for contact in scored.job.network_contacts %}{{ contact.name }}{% if contact.company %} / {{ contact.company }}{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %}{% endif %}</p>
+                        {% endif %}
+                        <a href="{{ scored.job.url }}" target="_blank" rel="noopener noreferrer" style="color:#c9ec57; text-decoration:none; font-size:11px; letter-spacing:1.6px; text-transform:uppercase; font-weight:700; font-family:'JetBrains Mono',monospace;">View role &rarr;</a>
+                      </td>
+                    </tr>
+                  </table>
+                {% endfor %}
+                {% if not top_roles %}
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#1f1813; border:1px solid #2f2620; border-radius:16px;">
+                    <tr><td style="padding:20px; color:#cbc1b2; font-size:15px; line-height:1.5;">No priority roles are ready this week yet. The search should keep running and use new finds as calibration examples.</td></tr>
+                  </table>
+                {% endif %}
+              </td>
+            </tr>
+
+            <!-- location pulse -->
+            <tr>
+              <td style="padding:18px 32px 28px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#1a1612; border:1px solid #2b251f; border-radius:16px;">
+                  <tr>
+                    <td style="padding:18px 20px;">
+                      <div style="font-size:10px; letter-spacing:2.6px; text-transform:uppercase; color:#9c9081; font-weight:700; font-family:'JetBrains Mono',monospace;">Location pulse</div>
+                      <p style="margin:9px 0 0; color:#cbc1b2; font-size:15px; line-height:1.55;">Austin has {{ groups.get("Austin", [])|length }} role{% if groups.get("Austin", [])|length != 1 %}s{% endif %}, Dallas has {{ groups.get("Dallas", [])|length }}, and remote has {{ groups.get("Remote", [])|length }}. Use the live dashboard to mark fit, direction, or discard decisions so scoring keeps learning.</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!-- cta -->
+            <tr>
+              <td align="center" style="padding:0 32px 36px;">
+                <a href="{{ user_profile.dashboard_url }}" target="_blank" rel="noopener noreferrer" style="display:block; max-width:340px; padding:15px 18px; border-radius:999px; background:#ee7d66; color:#1a1612; text-decoration:none; font-size:12px; letter-spacing:1.6px; text-transform:uppercase; font-weight:800; font-family:'JetBrains Mono',monospace;">Open live dashboard &rarr;</a>
+                <p style="margin:18px 0 0; color:#7c7166; font-size:12px; line-height:1.5;">Generated from the Google Sheet backend. The dashboard is the live workspace; this email is the weekly readout.</p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Simone's Career Center Saver",
+  "version": "0.1.0",
+  "description": "Save job postings from LinkedIn, Handshake, ATS pages, and company career sites to the Sheet-backed Career Center.",
+  "action": {
+    "default_title": "Save job",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*"
+  ],
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

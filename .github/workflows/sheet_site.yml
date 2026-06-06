@@ -1,0 +1,62 @@
+name: Sheet-Backed Site Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  sheet-site-refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest
+      - name: Render Sheet-backed dashboard
+        env:
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          LINKEDIN_DATA_DIRS: ${{ vars.LINKEDIN_DATA_DIRS }}
+          JOB_SEARCH_USER_FIRST_NAME: ${{ vars.JOB_SEARCH_USER_FIRST_NAME }}
+          JOB_SEARCH_USER_FULL_NAME: ${{ vars.JOB_SEARCH_USER_FULL_NAME }}
+          JOB_SEARCH_USER_INITIALS: ${{ vars.JOB_SEARCH_USER_INITIALS }}
+          JOB_SEARCH_SITE_TITLE: ${{ vars.JOB_SEARCH_SITE_TITLE }}
+          JOB_SEARCH_SITE_SUBTITLE: ${{ vars.JOB_SEARCH_SITE_SUBTITLE }}
+          JOB_SEARCH_PROFILE_SUMMARY: ${{ vars.JOB_SEARCH_PROFILE_SUMMARY }}
+          JOB_SEARCH_DASHBOARD_URL: ${{ vars.JOB_SEARCH_DASHBOARD_URL }}
+          JOB_SEARCH_APPLICATION_CONTEXT: ${{ vars.JOB_SEARCH_APPLICATION_CONTEXT }}
+        run: job-search-site
+      - name: Upload dashboard artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sheet-backed-dashboard
+          path: artifacts/*.html
+      - name: Prepare Pages site
+        run: |
+          mkdir -p site
+          latest_dashboard="$(ls -t artifacts/sheet_dashboard_*.html | head -n 1)"
+          cp "$latest_dashboard" site/index.html
+          cp artifacts/preferences.html site/preferences.html
+          cp -R assets site/assets
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

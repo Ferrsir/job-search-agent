@@ -1,0 +1,10 @@
+.env
+gmail-token.json
+oauth-client.json
+.venv/
+artifacts/
+site/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+*.pyc

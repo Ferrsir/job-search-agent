@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Save Job</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="brand-mark" aria-hidden="true">◎</div>
+        <div>
+          <strong>Save role</strong>
+          <span>Career Center intake</span>
+        </div>
+      </header>
+
+      <section class="notice" id="setup-notice" hidden>
+        Add your Apps Script endpoint in Options before saving.
+      </section>
+
+      <form id="job-form">
+        <label>
+          <span>Role</span>
+          <input id="title" name="title" autocomplete="off" required>
+        </label>
+        <label>
+          <span>Company</span>
+          <input id="company" name="company" autocomplete="organization" required>
+        </label>
+        <label>
+          <span>Location</span>
+          <input id="location" name="location" autocomplete="off" placeholder="Austin, TX / Remote / Unknown">
+        </label>
+        <label>
+          <span>URL</span>
+          <input id="url" name="url" type="url" required>
+        </label>
+        <label>
+          <span>Why it may fit</span>
+          <textarea id="fitSummary" name="fitSummary" rows="3"></textarea>
+        </label>
+        <label>
+          <span>Main requirements</span>
+          <textarea id="requirements" name="requirements" rows="4"></textarea>
+        </label>
+        <label>
+          <span>Initial status</span>
+          <select id="feedback" name="feedback">
+            <option value="">Needs review</option>
+            <option value="right">Right direction</option>
+            <option value="great">Great fit</option>
+            <option value="wrong">Wrong direction</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button class="secondary" id="options" type="button">Options</button>
+          <button class="primary" id="save" type="submit">Save to Sheet</button>
+        </div>
+      </form>
+
+      <p class="status" id="status" role="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

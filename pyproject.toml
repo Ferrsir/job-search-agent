@@ -1,0 +1,42 @@
+[project]
+name = "job-search-agent"
+version = "0.1.0"
+description = "Automated Gmail-to-Google-Sheets job-search pipeline with a personalized website and newsletter."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "beautifulsoup4>=4.12.3",
+  "google-api-python-client>=2.150.0",
+  "google-auth>=2.35.0",
+  "google-auth-oauthlib>=1.2.1",
+  "jinja2>=3.1.4",
+  "openai>=2.0.0",
+  "pydantic>=2.9.2",
+  "python-dotenv>=1.0.1",
+  "requests>=2.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.3",
+]
+
+[project.scripts]
+job-search-agent = "job_search_agent.main:run"
+job-search-public-sync = "job_search_agent.public_sync:run"
+job-search-research = "job_search_agent.research:run"
+job-search-site = "job_search_agent.site:run"
+job-search-brief = "job_search_agent.brief:run"
+job-search-apply = "job_search_agent.application_materials:run"
+job-search-backfill-analysis = "job_search_agent.backfill_analysis:run"
+
+[build-system]
+requires = ["setuptools>=75.0.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

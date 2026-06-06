@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Career Center Saver Options</title>
+    <link rel="stylesheet" href="popup.css">
+    <style>
+      body { width: min(720px, 100vw); }
+      .shell { max-width: 680px; margin: 0 auto; padding: 28px; }
+      .help { color: var(--muted); line-height: 1.55; margin: 0 0 16px; }
+      code { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 2px 5px; }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="brand-mark" aria-hidden="true">◎</div>
+        <div>
+          <strong>Extension setup</strong>
+          <span>Sheet intake bridge</span>
+        </div>
+      </header>
+      <p class="help">
+        Paste the deployed Google Apps Script web app URL and the shared submit secret.
+        The extension sends only reviewed job fields to the Sheet.
+      </p>
+      <form id="options-form">
+        <label>
+          <span>Apps Script web app URL</span>
+          <input id="endpointUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" required>
+        </label>
+        <label>
+          <span>Submit secret</span>
+          <input id="submitSecret" type="password" autocomplete="new-password" required>
+        </label>
+        <label>
+          <span>Dashboard URL</span>
+          <input id="dashboardUrl" type="url" placeholder="https://GITHUB_USERNAME.github.io/job-search-agent/">
+        </label>
+        <div class="actions">
+          <button class="secondary" id="test" type="button">Test</button>
+          <button class="primary" type="submit">Save Options</button>
+        </div>
+      </form>
+      <p class="status" id="status" role="status"></p>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

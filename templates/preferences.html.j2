@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ user_profile.site_title }} - Preferences</title>
+    <style>
+      :root {
+        --ink-950: #120d0b;
+        --ink-900: #19110f;
+        --ink-800: #211815;
+        --panel: #2d211d;
+        --panel-2: #372620;
+        --cream-100: #fbf4e8;
+        --cream-300: #d9cec2;
+        --cream-500: #a99d91;
+        --coral: #ff7d70;
+        --lime: #d9fb3f;
+        --teal: #4bbec8;
+        --line: rgba(244, 237, 225, 0.16);
+        --font-display: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--ink-950); color: var(--cream-100); }
+      body {
+        font-family: var(--font-display);
+        margin: 0;
+        min-height: 100vh;
+      }
+      button, input, textarea, select { font: inherit; }
+      button { cursor: pointer; }
+      .topbar {
+        align-items: center;
+        background: rgba(18, 13, 11, 0.94);
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        gap: 18px;
+        justify-content: space-between;
+        padding: 20px clamp(18px, 4vw, 56px);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .brand {
+        align-items: center;
+        display: flex;
+        gap: 14px;
+        min-width: 0;
+      }
+      .brand img { height: 44px; width: 44px; }
+      .brand strong {
+        display: block;
+        font-size: 23px;
+        line-height: 1;
+      }
+      .caps {
+        color: var(--cream-500);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+      .button {
+        align-items: center;
+        background: rgba(244, 237, 225, 0.06);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--cream-100);
+        display: inline-flex;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 900;
+        justify-content: center;
+        letter-spacing: 0.1em;
+        min-height: 42px;
+        padding: 0 16px;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      .button.primary {
+        background: var(--lime);
+        border-color: var(--lime);
+        color: var(--ink-900);
+      }
+      .button.teal {
+        background: rgba(75, 190, 200, 0.16);
+        border-color: rgba(75, 190, 200, 0.5);
+      }
+      .button.coral {
+        background: rgba(255, 125, 112, 0.14);
+        border-color: rgba(255, 125, 112, 0.42);
+      }
+      .shell {
+        display: grid;
+        gap: 28px;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        margin: 0 auto;
+        max-width: 1320px;
+        padding: 34px clamp(18px, 4vw, 56px) 64px;
+      }
+      .hero {
+        background: linear-gradient(135deg, rgba(255, 125, 112, 0.12), rgba(75, 190, 200, 0.08)), var(--panel);
+        border: 1px solid rgba(255, 125, 112, 0.34);
+        border-radius: 8px;
+        overflow: hidden;
+        padding: clamp(28px, 5vw, 56px);
+        position: relative;
+      }
+      .hero img {
+        height: 220px;
+        opacity: 0.1;
+        position: absolute;
+        right: -44px;
+        top: -54px;
+        width: 220px;
+      }
+      h1 {
+        font-size: clamp(48px, 8vw, 92px);
+        letter-spacing: 0;
+        line-height: 0.96;
+        margin: 24px 0 20px;
+        max-width: 850px;
+      }
+      .hero p {
+        color: var(--cream-300);
+        font-size: clamp(20px, 2.5vw, 30px);
+        line-height: 1.45;
+        margin: 0;
+        max-width: 860px;
+      }
+      .card {
+        background: rgba(33, 24, 21, 0.92);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 24px;
+      }
+      .progress {
+        background: rgba(244, 237, 225, 0.08);
+        border-radius: 999px;
+        height: 12px;
+        margin-top: 12px;
+        overflow: hidden;
+      }
+      .progress span {
+        background: linear-gradient(90deg, var(--coral), var(--teal));
+        display: block;
+        height: 100%;
+        width: 0;
+      }
+      .section-nav {
+        display: grid;
+        gap: 8px;
+        margin-top: 18px;
+      }
+      .section-nav button {
+        background: transparent;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        color: var(--cream-300);
+        min-height: 38px;
+        padding: 0 12px;
+        text-align: left;
+      }
+      .section-nav button.active {
+        background: rgba(255, 125, 112, 0.14);
+        border-color: rgba(255, 125, 112, 0.35);
+        color: var(--cream-100);
+      }
+      .question-section {
+        display: grid;
+        gap: 18px;
+        margin-top: 24px;
+      }
+      .question-card {
+        background: rgba(244, 237, 225, 0.035);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 20px;
+      }
+      .question-card h3 {
+        font-size: 20px;
+        line-height: 1.25;
+        margin: 0 0 8px;
+      }
+      .question-explain {
+        color: var(--cream-500);
+        font-size: 14px;
+        line-height: 1.55;
+        margin: 0 0 16px;
+      }
+      .options {
+        display: grid;
+        gap: 10px;
+      }
+      .option {
+        align-items: center;
+        background: rgba(18, 13, 11, 0.36);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--cream-300);
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 18px minmax(0, 1fr);
+        min-height: 42px;
+        padding: 10px 12px;
+      }
+      .rank-grid {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      }
+      .rank-item {
+        align-items: center;
+        background: rgba(18, 13, 11, 0.36);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        display: grid;
+        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) 76px;
+        padding: 10px 12px;
+      }
+      .rank-item input { text-align: center; }
+      input, textarea, select {
+        background: rgba(18, 13, 11, 0.72);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--cream-100);
+        min-height: 42px;
+        padding: 10px 12px;
+        width: 100%;
+      }
+      textarea { min-height: 96px; resize: vertical; }
+      input:focus, textarea:focus, select:focus {
+        border-color: var(--teal);
+        outline: none;
+      }
+      .summary {
+        display: grid;
+        gap: 12px;
+      }
+      .summary-row {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 12px;
+      }
+      .summary-row strong {
+        color: var(--cream-100);
+        display: block;
+        margin-bottom: 6px;
+      }
+      .summary-row span {
+        color: var(--cream-500);
+        line-height: 1.45;
+      }
+      .handoff {
+        color: var(--cream-500);
+        font-size: 14px;
+        line-height: 1.5;
+        margin-top: 16px;
+      }
+      @media (max-width: 960px) {
+        .topbar { align-items: flex-start; flex-direction: column; }
+        .shell { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <img src="assets/logo-comet-icon-1024.png" alt="">
+        <div>
+          <strong>{{ user_profile.site_title }}</strong>
+          <span class="caps">Preference questionnaire</span>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="button" href="index.html">Dashboard</a>
+        <button class="button coral" id="restore-defaults" type="button">Restore current answers</button>
+        <button class="button" id="start-fresh" type="button">Start fresh</button>
+        <button class="button teal" id="download-intake" type="button">Download intake HTML</button>
+        <button class="button primary" id="save-preferences" type="button">Save preferences</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section>
+        <div class="hero">
+          <img src="assets/logo-comet-1024.png" alt="">
+          <span class="caps">Retake or tune the profile</span>
+          <h1>Career signal calibration.</h1>
+          <p>Use this to update what the job agent should prioritize, avoid, stretch for, and explain. Save it for this browser, or download a rendered HTML intake file that can be uploaded back into ChatGPT or Codex during setup.</p>
+        </div>
+        <form id="questionnaire" class="question-section"></form>
+      </section>
+
+      <aside class="card">
+        <span class="caps">Completion</span>
+        <div class="progress" aria-label="Completion progress"><span id="progress-bar"></span></div>
+        <p id="progress-copy" style="color: var(--cream-500); line-height: 1.5;">No answers yet.</p>
+        <div class="section-nav" id="section-nav"></div>
+        <p class="handoff">After filling this out, download the intake HTML and upload it to ChatGPT/Codex with the setup guide. The file includes readable answers plus machine-readable JSON.</p>
+        <div class="summary" id="summary" style="margin-top: 22px;"></div>
+      </aside>
+    </main>
+
+    <script>
+      const preferenceKey = "job-search-agent.preferences";
+      const userProfile = {
+        firstName: {{ user_profile.first_name|tojson }},
+        fullName: {{ user_profile.full_name|tojson }},
+        siteTitle: {{ user_profile.site_title|tojson }},
+        profileSummary: {{ user_profile.profile_summary|tojson }},
+        dashboardUrl: {{ user_profile.dashboard_url|tojson }}
+      };
+      const defaultPreferences = {
+        locations: "Austin\nDallas-Fort Worth\nRemote\nHybrid Austin\nHybrid Dallas\nTexas-wide with travel\nWashington, DC only if flexible/exceptional",
+        roles: "Strategic partnerships\nVenture capital / investment research / platform\nGovernment affairs / public policy\nResearch analyst\nStrategy / market intelligence\nStrategic business development",
+        sectors: "Space\nVenture capital / private capital\nQuantum\nIntelligence / OSINT\nAdvanced manufacturing\nAutonomy / drones\nDefense AI / cyber / dual-use technology",
+        avoid: "Pure sales\nPure technical / engineering\nTraditional government jobs\nEntry-level admin roles\nInternships\nFellowships\nU.S. citizens-only roles\nActive security clearance required",
+        compensation: "$100k target; $80k floor only if mission/growth/equity is strong",
+        priorities: "Learning curve\nNetwork access\nLong-term career upside\nLocation\nPrestige\nCompensation\nTitle\nMission fit\nWork-life balance",
+        questionnaireAnswers: {}
+      };
+
+      const sections = [
+        {
+          title: "Core direction",
+          questions: [
+            { id: "role_types_rank", type: "rank", prompt: "Rank your top 3 preferred role types.", options: ["Strategy / Strategic Initiatives", "Business Development / Growth", "Government Affairs / Public Policy", "Strategic Partnerships", "Defense Innovation / Ecosystem Building", "Venture Capital / Investment Research / Platform", "Space Policy / Commercial Space Strategy", "Chief of Staff / Founder's Office", "Program Manager / Operations", "Research / Analyst"], default: {"Strategic Partnerships": 1, "Venture Capital / Investment Research / Platform": 2, "Strategy / Strategic Initiatives": 3} },
+            { id: "avoid_roles", type: "check", prompt: "Which role types should the agent mostly avoid?", options: ["Pure sales", "Pure technical / engineering", "Pure research with little external engagement", "Traditional government jobs", "Campaign / electoral politics", "Nonprofit program administration", "Entry-level admin roles", "Consulting roles", "Law firm roles"], default: ["Pure sales", "Pure technical / engineering", "Traditional government jobs", "Entry-level admin roles"] },
+            { id: "day_to_day", type: "check", prompt: "What kind of work sounds most exciting day to day?", options: ["Working with founders", "Working with investors", "Working with government stakeholders", "Writing policy or strategy memos", "Helping companies enter or scale in government markets", "Building partnerships", "Researching markets and companies", "Supporting investment decisions", "Representing an organization externally", "Creating reports, newsletters, or thought leadership"], default: ["Working with founders", "Working with investors", "Building partnerships", "Helping companies enter or scale in government markets"] }
+          ]
+        },
+        {
+          title: "Location and lifestyle",
+          questions: [
+            { id: "locations_rank", type: "rank", prompt: "Rank your preferred locations.", options: ["Austin", "Dallas-Fort Worth", "Remote", "Hybrid in Austin", "Hybrid in Dallas", "Texas-wide with travel", "Washington, DC"], default: {"Austin": 1, "Dallas-Fort Worth": 2, "Remote": 3} },
+            { id: "dallas_austin", type: "choice", prompt: "Are Dallas and Austin equally attractive?", options: ["Yes, equally", "Prefer Austin", "Prefer Dallas", "Prefer remote", "Depends on the role"], default: "Depends on the role" },
+            { id: "remote_travel", type: "choice", prompt: "Are you open to remote roles that require travel?", options: ["Yes, monthly travel is fine", "Yes, quarterly travel is fine", "Only occasional travel", "Prefer no travel", "Depends on destination / role"], default: "Only occasional travel" },
+            { id: "dc_preferred", type: "choice", prompt: "Should the agent include roles that say DC preferred but do not require DC?", options: ["Yes, include and flag them", "Only if very strong fit", "No, exclude them"], default: "Only if very strong fit" },
+            { id: "relocation", type: "choice", prompt: "Are you open to relocating outside Texas for a dream role?", options: ["No", "Only DC", "Only if compensation is very strong", "Only if the company/role is exceptional", "Yes, but rare"], default: "Only if the company/role is exceptional" }
+          ]
+        },
+        {
+          title: "Organization preferences",
+          questions: [
+            { id: "org_types_rank", type: "rank", prompt: "Rank your preferred organization types.", options: ["Defense-tech startup", "Space-tech startup", "Dual-use AI / autonomy / cyber / robotics company", "VC fund / investment firm", "Think tank / policy organization", "Defense prime", "Corporate venture capital", "Government contractor", "University-affiliated innovation center", "Nonprofit / ecosystem organization", "Consulting / advisory firm"], default: {"Defense-tech startup": 1, "Space-tech startup": 2, "VC fund / investment firm": 3} },
+            { id: "company_stage", type: "check", prompt: "What company stage is most attractive?", options: ["Early-stage startup", "Growth-stage startup", "Late-stage private company", "Public company", "VC fund", "Established nonprofit / think tank", "Large defense prime", "No strong preference"], default: ["Growth-stage startup", "VC fund", "Late-stage private company"] },
+            { id: "deprioritize_envs", type: "text", prompt: "What environments should the agent deprioritize?", default: "Very bureaucratic, too academic, too sales-heavy, too technical, too corporate, too political." },
+            { id: "mission_alignment", type: "choice", prompt: "How important is mission alignment?", options: ["Non-negotiable", "Very important", "Important but flexible", "Nice to have"], default: "Very important" },
+            { id: "sectors_rank", type: "rank", prompt: "Rank your top 5 sectors.", options: ["Space", "Defense AI", "Autonomy / drones", "Cybersecurity", "Quantum", "Advanced manufacturing", "Robotics", "Command and control / data platforms", "Defense logistics", "Intelligence / OSINT", "Venture capital / private capital", "Acquisition reform / government markets"], default: {"Space": 1, "Venture capital / private capital": 2, "Defense AI": 3, "Autonomy / drones": 4, "Intelligence / OSINT": 5} }
+          ]
+        },
+        {
+          title: "Seniority and upside",
+          questions: [
+            { id: "priority_titles", type: "check", prompt: "What titles should the agent prioritize?", options: ["Associate", "Senior Associate", "Analyst", "Senior Analyst", "Manager", "Program Manager", "Strategy Associate", "Strategic Partnerships Associate / Manager", "Business Development Associate / Manager", "Government Affairs Associate / Manager", "Policy Associate / Manager", "Investment Analyst / Associate", "Platform Associate", "Chief of Staff", "Founder's Office", "Director-level only if plausible"], default: ["Manager", "Program Manager", "Strategic Partnerships Associate / Manager", "Business Development Associate / Manager", "Investment Analyst / Associate"] },
+            { id: "seniority", type: "choice", prompt: "What seniority level feels right?", options: ["Early-career but not entry-level", "Associate / Senior Associate", "Manager", "Flexible if role is excellent", "I want the agent to stretch for more senior roles"], default: "Manager" },
+            { id: "compensation", type: "text", prompt: "What is your minimum acceptable compensation?", default: "Base salary floor: $80k if mission/upside is strong. Target salary: $100k." },
+            { id: "priorities_rank", type: "rank", prompt: "What matters more right now?", options: ["Compensation", "Prestige / brand name", "Learning curve", "Network access", "Mission fit", "Title", "Work-life balance", "Long-term career upside", "Location"], default: {"Learning curve": 1, "Network access": 2, "Long-term career upside": 3, "Location": 4, "Prestige / brand name": 5} },
+            { id: "equity", type: "choice", prompt: "Are you open to roles with equity-heavy compensation?", options: ["Yes", "Yes, if base salary is still reasonable", "Maybe", "No"], default: "Yes, if base salary is still reasonable" }
+          ]
+        },
+        {
+          title: "Fit and disqualifiers",
+          questions: [
+            { id: "hard_disqualifiers", type: "check", prompt: "What are hard disqualifiers?", options: ["Requires non-Texas relocation", "Requires active security clearance", "Requires technical degree", "Requires 5+ years of direct experience", "Compensation too low", "Pure sales quota role", "Too much travel", "No remote/hybrid flexibility", "Company seems unstable", "Mission does not interest me"], default: ["Requires non-Texas relocation", "Requires active security clearance", "Requires technical degree", "Pure sales quota role"] },
+            { id: "clearance", type: "choice", prompt: "Are you open to roles requiring or preferring a security clearance?", options: ["Yes, include", "Only if they are willing to sponsor", "No", "Include but flag clearly"], default: "Include but flag clearly" },
+            { id: "stretch_qualifications", type: "choice", prompt: "Are you open to applying when you meet only 60-70% of qualifications?", options: ["Yes, encourage stretch applications", "Yes, but only for high-fit roles", "No, only include strong qualification matches"], default: "Yes, but only for high-fit roles" },
+            { id: "stretch_definition", type: "text", prompt: "What should the agent consider a stretch but worth it role?", default: "A role with strong strategy, partnerships, investment, or market-access ownership at a high-signal company, even if the years of experience are slightly above my profile." },
+            { id: "never_send", type: "text", prompt: "What should the agent never send you?", default: "Engineer-first roles, quota sales roles, mandatory relocation, active-clearance-only roles, internships, fellowships, or low-upside admin work." }
+          ]
+        },
+        {
+          title: "Network and warm intros",
+          questions: [
+            { id: "warm_intro_weight", type: "choice", prompt: "Should the agent prioritize companies with a warm path?", options: ["Yes, heavily prioritize", "Yes, but not too much", "Only flag it, do not affect ranking", "No"], default: "Yes, but not too much" },
+            { id: "warm_networks", type: "check", prompt: "What networks should the agent consider for warm intros?", options: ["Current employer / colleagues", "Former employers", "University alumni", "Graduate-school alumni", "Student organizations", "Professional associations", "Investors / fund network", "Industry councils", "Founder / startup network", "LinkedIn mutuals", "Family / personal network"], default: ["Former employers", "University alumni", "Professional associations", "LinkedIn mutuals"] },
+            { id: "contact_suggestions", type: "choice", prompt: "Do you want the weekly digest to suggest specific people to contact?", options: ["Yes, always", "Only for top roles", "Only when there is a clear connection", "No"], default: "Only when there is a clear connection" },
+            { id: "avoid_networks", type: "text", prompt: "Are there people, companies, or networks the agent should avoid referencing?", default: "" }
+          ]
+        },
+        {
+          title: "Application strategy",
+          questions: [
+            { id: "weekly_applications", type: "choice", prompt: "How many jobs do you realistically want to apply to per week?", options: ["1-2", "3-5", "5-8", "Only truly excellent fits", "Depends on the week"], default: "3-5" },
+            { id: "aggressiveness", type: "choice", prompt: "How aggressive should the agent be?", options: ["Very selective: only top-tier fits", "Balanced: send strong and plausible matches", "Aggressive: include stretch roles and adjacent opportunities", "Exploratory: help me discover options I may not have considered"], default: "Balanced: send strong and plausible matches" },
+            { id: "top_job_support", type: "check", prompt: "For each top job, what support should the agent provide?", options: ["Why this fits me", "Concerns / possible mismatch", "Suggested resume angle", "Suggested cover letter angle", "Suggested outreach message", "Suggested referral target", "Application deadline", "Company background", "Recent company news", "Compensation estimate", "Interview prep notes"], default: ["Why this fits me", "Concerns / possible mismatch", "Suggested resume angle", "Suggested cover letter angle", "Suggested outreach message", "Suggested referral target"] },
+            { id: "draft_materials", type: "choice", prompt: "Should the agent draft application materials automatically?", options: ["Yes, for every Apply Now role", "Only for the top 3 each week", "Only when I ask", "No, just send alerts"], default: "Only when I ask" },
+            { id: "tracker", type: "choice", prompt: "Do you want the agent to maintain a job tracker?", options: ["Yes, Google Sheets", "Yes, Airtable", "Yes, Notion", "No, email digest only"], default: "Yes, Google Sheets" }
+          ]
+        },
+        {
+          title: "Digest design",
+          questions: [
+            { id: "alert_frequency", type: "choice", prompt: "How often should you receive job alerts?", options: ["Weekly", "Twice weekly", "Every weekday", "Only when strong matches appear"], default: "Weekly" },
+            { id: "digest_day", type: "choice", prompt: "What day should the weekly digest arrive?", options: ["Monday", "Tuesday", "Wednesday", "Friday", "Sunday evening"], default: "Monday" },
+            { id: "digest_format", type: "check", prompt: "What format would be most useful?", options: ["Email digest", "Google Sheet update", "Airtable tracker", "ChatGPT summary", "Calendar/task reminders"], default: ["Email digest", "Google Sheet update", "ChatGPT summary"] },
+            { id: "digest_size", type: "choice", prompt: "How many roles should be in the weekly digest?", options: ["Top 5 only", "Top 10", "Top 15", "All qualified roles, grouped by score", "Only roles above a certain score"], default: "Top 10" },
+            { id: "rejected_notable", type: "choice", prompt: "Do you want a rejected but notable section?", options: ["Yes, helpful for calibration", "Only for the first few weeks", "No"], default: "Yes, helpful for calibration" }
+          ]
+        },
+        {
+          title: "Personal positioning",
+          questions: [
+            { id: "professional_identity", type: "choice", prompt: "What professional identity should the agent optimize around?", options: ["Defense tech strategy / partnerships professional", "National security innovation and private capital professional", "Space policy and dual-use technology professional", "Government affairs / market access professional for defense tech", "Venture / ecosystem builder focused on national security technology"], default: "National security innovation and private capital professional" },
+            { id: "background_rank", type: "rank", prompt: "Which parts of your background should the agent emphasize most?", options: ["Current work experience", "Previous internships", "Research and writing", "Strategic projects", "Partnership or stakeholder work", "Finance / investment exposure", "Policy or government exposure", "Technical literacy", "Data analysis", "Events / convening experience", "Leadership experience", "International background and languages"], default: {"Current work experience": 1, "Strategic projects": 2, "Research and writing": 3, "Partnership or stakeholder work": 4, "Policy or government exposure": 5} },
+            { id: "application_story", type: "text", prompt: "What story should applications tell about you?", default: "I sit at the intersection of national security, technology, markets, and policy. I can help mission-driven organizations understand government demand, build trusted partnerships, and turn strategic ideas into practical execution." },
+            { id: "five_years", type: "text", prompt: "What do you want to be doing in 5 years?", default: "Working in a high-leverage strategy, partnerships, or investment role around national security technology, with strong network access and real ownership." },
+            { id: "dream_job", type: "text", prompt: "What job would make you immediately say this is exactly what I am looking for?", default: "A strategy, partnerships, platform, or market-access role at a high-quality defense tech, space, or private-capital organization in Austin, Dallas, or remote, with real ownership and senior mentorship." }
+          ]
+        }
+      ];
+
+      const form = document.getElementById("questionnaire");
+      const nav = document.getElementById("section-nav");
+      const progressBar = document.getElementById("progress-bar");
+      const progressCopy = document.getElementById("progress-copy");
+      const summary = document.getElementById("summary");
+
+      const explanationById = {
+        role_types_rank: "This tells the scoring algorithm which job families should rise to the top when a posting has several possible angles.",
+        avoid_roles: "These are negative signals. The agent uses them to filter or downgrade roles that may look adjacent but are not worth your time.",
+        day_to_day: "This captures the actual work you want to do, not just the title. It helps separate attractive labels from roles with the wrong daily texture.",
+        locations_rank: "Location preferences affect tabs, score boosts, and the weekly takeaway. Rank only places you would seriously consider.",
+        dallas_austin: "This tells the agent whether Texas roles should be treated equally or whether one city should receive a stronger boost.",
+        remote_travel: "Remote roles often hide travel expectations. This answer helps the agent flag remote roles that may not fit your lifestyle.",
+        dc_preferred: "Some roles list a preferred location without requiring it. This sets how permissive the agent should be with those postings.",
+        relocation: "This protects you from roles that look exciting but would require a move you do not actually want.",
+        org_types_rank: "Organization type changes the meaning of a role. A strategy job at a startup, fund, nonprofit, or large company can be very different.",
+        company_stage: "Stage affects pace, ambiguity, compensation, mentorship, and ownership. This helps match the environment, not just the function.",
+        deprioritize_envs: "Use this to describe softer mismatches that are hard to infer from job titles, such as bureaucracy or sales-heavy cultures.",
+        mission_alignment: "This tells the agent how much to trade off mission fit against compensation, brand, location, or title.",
+        sectors_rank: "Sector ranking helps balance the search so one attractive industry does not crowd out other high-fit opportunities.",
+        priority_titles: "Titles are noisy, but they are useful signals for seniority and function. This guides what should be treated as plausibly right-sized.",
+        seniority: "This helps the agent decide whether to include stretch roles, manager roles, associate roles, or more senior opportunities.",
+        compensation: "Compensation targets prevent the agent from over-prioritizing roles that are interesting but economically unrealistic.",
+        priorities_rank: "This makes tradeoffs explicit when a job has mixed signals, such as great learning but weak location or strong brand but lower pay.",
+        equity: "Equity-heavy roles can be attractive or risky depending on the base salary and company stage. This tells the agent how to handle that tradeoff.",
+        hard_disqualifiers: "Hard disqualifiers should usually override the score. Select anything that would make you decline regardless of fit.",
+        clearance: "Clearance language can be a hard blocker or just a preference. This answer tells the agent whether to reject, flag, or include those roles.",
+        stretch_qualifications: "This controls how much the agent should encourage you to apply when you meet some but not all listed requirements.",
+        stretch_definition: "Use this to define what makes a reach role worth attempting despite gaps in years, exact industry, or seniority.",
+        never_send: "This is the clearest blacklist. The agent should use these terms to avoid wasting review time.",
+        warm_intro_weight: "Network access can change application strategy. This controls whether warm paths affect ranking or simply appear as context.",
+        warm_networks: "These are the networks the agent should search for first-reach suggestions when LinkedIn export data is available.",
+        contact_suggestions: "This sets how often the newsletter and dashboard should include suggested people to contact before applying.",
+        avoid_networks: "Use this for sensitive exclusions so the agent does not recommend outreach through people or organizations you want to avoid.",
+        weekly_applications: "This sets the practical weekly workload. The agent can surface many roles, but the shortlist should match your real capacity.",
+        aggressiveness: "This controls search breadth, from selective top-fit roles to exploratory adjacent opportunities.",
+        top_job_support: "This determines what extra context each top role should include so you can decide quickly whether to act.",
+        draft_materials: "This tells the application-packet workflow when to generate resume and cover-letter prompts.",
+        tracker: "This identifies the system of record you want. This repo is optimized for Google Sheets, but the preference is still useful context.",
+        alert_frequency: "This controls the expected newsletter rhythm and how often the friend wants to review new postings.",
+        digest_day: "This sets the default weekly brief schedule and should match when the friend will actually act on roles.",
+        digest_format: "This captures the preferred output surfaces so setup can emphasize email, Sheet, ChatGPT, or other workflows.",
+        digest_size: "This controls how much appears in the weekly readout and prevents the digest from becoming too noisy.",
+        rejected_notable: "Rejected-but-notable roles are useful for calibration, especially early on when the algorithm is still learning taste.",
+        professional_identity: "This is the headline positioning the agent should optimize around when explaining fit and generating application materials.",
+        background_rank: "This tells ChatGPT and the scoring logic which parts of the friend's background are strongest evidence.",
+        application_story: "This becomes the narrative spine for cover letters, outreach notes, and fit summaries.",
+        five_years: "Longer-term direction helps the agent prefer roles that build toward the desired career, not just immediate convenience.",
+        dream_job: "This gives the agent a north star for what an unusually strong match looks like."
+      };
+
+      function savedPreferences() {
+        return JSON.parse(localStorage.getItem(preferenceKey) || JSON.stringify(defaultPreferences));
+      }
+
+      function answerDefaults() {
+        const prefs = savedPreferences();
+        return { ...flattenDefaults(), ...(prefs.questionnaireAnswers || {}) };
+      }
+
+      function flattenDefaults() {
+        return Object.fromEntries(sections.flatMap((section) => section.questions.map((question) => [question.id, question.default || ""])));
+      }
+
+      function renderQuestion(question) {
+        const card = document.createElement("article");
+        card.className = "question-card";
+        card.dataset.questionId = question.id;
+        card.innerHTML = `<h3>${escapeHtml(question.prompt)}</h3><p class="question-explain">${escapeHtml(explanationById[question.id] || "This answer helps personalize search, scoring, and newsletter explanations.")}</p>`;
+        if (question.type === "choice" || question.type === "check") {
+          const options = document.createElement("div");
+          options.className = "options";
+          question.options.forEach((option) => {
+            const id = `${question.id}-${option}`.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+            const label = document.createElement("label");
+            label.className = "option";
+            label.innerHTML = `<input id="${id}" name="${question.id}" type="${question.type === "choice" ? "radio" : "checkbox"}" value="${escapeAttribute(option)}"><span>${escapeHtml(option)}</span>`;
+            options.appendChild(label);
+          });
+          card.appendChild(options);
+        } else if (question.type === "rank") {
+          const grid = document.createElement("div");
+          grid.className = "rank-grid";
+          question.options.forEach((option) => {
+            const label = document.createElement("label");
+            label.className = "rank-item";
+            label.innerHTML = `<span>${escapeHtml(option)}</span><input name="${question.id}" data-rank-option="${escapeAttribute(option)}" type="number" min="1" max="10" inputmode="numeric" placeholder="-">`;
+            grid.appendChild(label);
+          });
+          card.appendChild(grid);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.name = question.id;
+          card.appendChild(textarea);
+        }
+        return card;
+      }
+
+      function renderPage() {
+        sections.forEach((section, index) => {
+          const navButton = document.createElement("button");
+          navButton.type = "button";
+          navButton.textContent = section.title;
+          navButton.addEventListener("click", () => document.getElementById(`section-${index}`).scrollIntoView({ behavior: "smooth" }));
+          nav.appendChild(navButton);
+
+          const sectionNode = document.createElement("section");
+          sectionNode.className = "question-section";
+          sectionNode.id = `section-${index}`;
+          sectionNode.innerHTML = `<span class="caps">${escapeHtml(section.title)}</span>`;
+          section.questions.forEach((question) => sectionNode.appendChild(renderQuestion(question)));
+          form.appendChild(sectionNode);
+        });
+      }
+
+      function readAnswers() {
+        const answers = {};
+        sections.flatMap((section) => section.questions).forEach((question) => {
+          if (question.type === "check") {
+            answers[question.id] = Array.from(form.querySelectorAll(`[name="${question.id}"]:checked`)).map((input) => input.value);
+          } else if (question.type === "choice") {
+            answers[question.id] = form.querySelector(`[name="${question.id}"]:checked`)?.value || "";
+          } else if (question.type === "rank") {
+            const ranked = {};
+            form.querySelectorAll(`[name="${question.id}"]`).forEach((input) => {
+              if (input.value) ranked[input.dataset.rankOption] = Number(input.value);
+            });
+            answers[question.id] = ranked;
+          } else {
+            answers[question.id] = form.elements[question.id]?.value || "";
+          }
+        });
+        return answers;
+      }
+
+      function applyAnswers(answers, options = {}) {
+        const useDefaults = options.useDefaults !== false;
+        sections.flatMap((section) => section.questions).forEach((question) => {
+          const value = Object.prototype.hasOwnProperty.call(answers, question.id) ? answers[question.id] : (useDefaults ? question.default ?? "" : "");
+          if (question.type === "check") {
+            form.querySelectorAll(`[name="${question.id}"]`).forEach((input) => {
+              input.checked = Array.isArray(value) && value.includes(input.value);
+            });
+          } else if (question.type === "choice") {
+            form.querySelectorAll(`[name="${question.id}"]`).forEach((input) => {
+              input.checked = value === input.value;
+            });
+          } else if (question.type === "rank") {
+            form.querySelectorAll(`[name="${question.id}"]`).forEach((input) => {
+              input.value = value && value[input.dataset.rankOption] ? value[input.dataset.rankOption] : "";
+            });
+          } else {
+            form.elements[question.id].value = value || "";
+          }
+        });
+        updateProgress();
+      }
+
+      function asLines(value) {
+        if (Array.isArray(value)) return value.join("\n");
+        if (value && typeof value === "object") {
+          return Object.entries(value)
+            .filter(([, rank]) => rank)
+            .sort((a, b) => Number(a[1]) - Number(b[1]))
+            .map(([label]) => label)
+            .join("\n");
+        }
+        return String(value || "");
+      }
+
+      function preferencesFromAnswers(answers) {
+        return {
+          locations: asLines(answers.locations_rank) || defaultPreferences.locations,
+          roles: asLines(answers.role_types_rank) || defaultPreferences.roles,
+          sectors: asLines(answers.sectors_rank) || defaultPreferences.sectors,
+          avoid: asLines([...(answers.avoid_roles || []), ...(answers.hard_disqualifiers || []), answers.never_send].filter(Boolean)) || defaultPreferences.avoid,
+          compensation: answers.compensation || defaultPreferences.compensation,
+          priorities: asLines(answers.priorities_rank) || defaultPreferences.priorities,
+          questionnaireAnswers: answers
+        };
+      }
+
+      function isAnswered(value) {
+        if (Array.isArray(value)) return value.length > 0;
+        if (value && typeof value === "object") return Object.values(value).some(Boolean);
+        return Boolean(String(value || "").trim());
+      }
+
+      function updateProgress() {
+        const answers = readAnswers();
+        const allQuestions = sections.flatMap((section) => section.questions);
+        const answered = allQuestions.filter((question) => isAnswered(answers[question.id])).length;
+        const pct = Math.round((answered / allQuestions.length) * 100);
+        progressBar.style.width = `${pct}%`;
+        progressCopy.textContent = `${answered} of ${allQuestions.length} prompts answered.`;
+        summary.innerHTML = [
+          ["Role families", asLines(answers.role_types_rank)],
+          ["Locations", asLines(answers.locations_rank)],
+          ["Sectors", asLines(answers.sectors_rank)],
+          ["Avoid", asLines(answers.avoid_roles || [])],
+          ["Positioning", answers.professional_identity || ""]
+        ].map(([label, value]) => `<div class="summary-row"><strong>${escapeHtml(label)}</strong><span>${escapeHtml(value || "Not set yet")}</span></div>`).join("");
+      }
+
+      function questionLookup() {
+        return Object.fromEntries(sections.flatMap((section) => section.questions.map((question) => [question.id, { ...question, section: section.title }])));
+      }
+
+      function completedIntakeHtml(answers) {
+        const lookup = questionLookup();
+        const preferences = preferencesFromAnswers(answers);
+        const rows = Object.entries(answers).map(([id, answer]) => {
+          const question = lookup[id] || { prompt: id, section: "Other" };
+          return `
+            <article class="answer-card">
+              <div class="meta">${escapeHtml(question.section)} / ${escapeHtml(id)}</div>
+              <h2>${escapeHtml(question.prompt)}</h2>
+              <p class="why">${escapeHtml(explanationById[id] || "This answer helps personalize search, scoring, and newsletter explanations.")}</p>
+              <pre>${escapeHtml(formatAnswer(answer) || "No answer provided")}</pre>
+            </article>
+          `;
+        }).join("");
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          userProfile,
+          preferences,
+          answers,
+          questions: sections.map((section) => ({
+            title: section.title,
+            questions: section.questions.map((question) => ({
+              id: question.id,
+              prompt: question.prompt,
+              type: question.type,
+              explanation: explanationById[question.id] || "",
+              options: question.options || []
+            }))
+          }))
+        };
+        return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${escapeHtml(userProfile.siteTitle)} Intake Export</title>
+    <style>
+      :root { color-scheme: dark; --bg:#120d0b; --panel:#211815; --line:rgba(244,237,225,.16); --cream:#fbf4e8; --muted:#a99d91; --coral:#ff7d70; --lime:#d9fb3f; --teal:#4bbec8; }
+      * { box-sizing: border-box; }
+      body { background: var(--bg); color: var(--cream); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin:0; padding:40px 20px; }
+      main { margin:0 auto; max-width:980px; }
+      header { background: linear-gradient(135deg, rgba(255,125,112,.14), rgba(75,190,200,.08)), #2d211d; border:1px solid rgba(255,125,112,.34); border-radius:10px; padding:34px; }
+      h1 { font-size: clamp(38px, 6vw, 72px); line-height:.98; margin:10px 0 14px; }
+      .caps, .meta { color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px; font-weight:900; letter-spacing:.16em; text-transform:uppercase; }
+      .grid { display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin:22px 0; }
+      .summary, .answer-card { background: var(--panel); border:1px solid var(--line); border-radius:10px; padding:22px; }
+      h2 { font-size:22px; margin:8px 0; }
+      p { color:#d9cec2; line-height:1.55; }
+      .why { color: var(--muted); }
+      pre { background:#120d0b; border:1px solid var(--line); border-radius:8px; color:#fbf4e8; overflow:auto; padding:14px; white-space:pre-wrap; }
+      script[type="application/json"] { display:none; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <span class="caps">Job Search Agent Intake Export</span>
+        <h1>${escapeHtml(userProfile.fullName || userProfile.siteTitle)}</h1>
+        <p>${escapeHtml(userProfile.profileSummary || "")}</p>
+        <p>Upload this HTML file to ChatGPT or Codex during setup. It includes readable answers below plus machine-readable JSON in the page source.</p>
+      </header>
+      <section class="grid">
+        <div class="summary"><span class="caps">Locations</span><pre>${escapeHtml(preferences.locations || "")}</pre></div>
+        <div class="summary"><span class="caps">Roles</span><pre>${escapeHtml(preferences.roles || "")}</pre></div>
+        <div class="summary"><span class="caps">Sectors</span><pre>${escapeHtml(preferences.sectors || "")}</pre></div>
+        <div class="summary"><span class="caps">Avoid</span><pre>${escapeHtml(preferences.avoid || "")}</pre></div>
+      </section>
+      ${rows}
+      <script type="application/json" id="job-search-agent-intake">${escapeHtml(JSON.stringify(payload, null, 2))}<\\/script>
+    </main>
+  </body>
+</html>`;
+      }
+
+      function formatAnswer(value) {
+        if (Array.isArray(value)) return value.join("\n");
+        if (value && typeof value === "object") {
+          return Object.entries(value)
+            .filter(([, rank]) => rank)
+            .sort((a, b) => Number(a[1]) - Number(b[1]))
+            .map(([label, rank]) => `${rank}. ${label}`)
+            .join("\n");
+        }
+        return String(value || "");
+      }
+
+      function downloadFile(filename, html) {
+        const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportFilename() {
+        const base = (userProfile.fullName || userProfile.siteTitle || "job-search-intake")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "");
+        const date = new Date().toISOString().slice(0, 10);
+        return `${base || "job-search"}-preferences-intake-${date}.html`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replace(/`/g, "&#96;");
+      }
+
+      renderPage();
+      applyAnswers(answerDefaults());
+      form.addEventListener("input", updateProgress);
+      document.getElementById("restore-defaults").addEventListener("click", () => applyAnswers(answerDefaults()));
+      document.getElementById("start-fresh").addEventListener("click", () => applyAnswers({}, { useDefaults: false }));
+      document.getElementById("save-preferences").addEventListener("click", () => {
+        localStorage.setItem(preferenceKey, JSON.stringify(preferencesFromAnswers(readAnswers())));
+        updateProgress();
+        document.getElementById("save-preferences").textContent = "Saved";
+        window.setTimeout(() => document.getElementById("save-preferences").textContent = "Save preferences", 1400);
+      });
+      document.getElementById("download-intake").addEventListener("click", () => {
+        const answers = readAnswers();
+        localStorage.setItem(preferenceKey, JSON.stringify(preferencesFromAnswers(answers)));
+        downloadFile(exportFilename(), completedIntakeHtml(answers));
+      });
+    </script>
+  </body>
+</html>
