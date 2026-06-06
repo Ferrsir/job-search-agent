@@ -9,18 +9,11 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
       - name: Install dependencies
         run: pip install -e ".[dev]"
       - name: Run tests
@@ -50,23 +43,3 @@ jobs:
         with:
           name: gpt-role-research
           path: artifacts/*
-      - name: Prepare Pages site from research
-        run: |
-          mkdir -p site
-          latest_dashboard="$(ls -t artifacts/*dashboard*.html artifacts/*.html 2>/dev/null | head -n 1)"
-          if [ -n "$latest_dashboard" ]; then
-            cp "$latest_dashboard" site/index.html
-          else
-            printf '<!doctype html><title>Research unavailable</title><p>No successful research dashboard was generated.</p>' > site/index.html
-          fi
-          if [ -f artifacts/preferences.html ]; then
-            cp artifacts/preferences.html site/preferences.html
-          fi
-          cp -R assets site/assets
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: site
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
