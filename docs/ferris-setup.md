@@ -14,7 +14,7 @@ JOB_SEARCH_SITE_TITLE=Ferris' Career Center
 JOB_SEARCH_SITE_SUBTITLE=Career Center
 JOB_SEARCH_PROFILE_SUMMARY=TAMS/SMU student interested in investment banking, private equity, financial analysis, and finance-focused internships involving company research, modeling, valuation, and due diligence.
 JOB_SEARCH_DASHBOARD_URL=https://Ferrsir.github.io/job-search-agent/
-JOB_SEARCH_APPLICATION_CONTEXT=Use Ferris's uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials.
+JOB_SEARCH_APPLICATION_CONTEXT=Use Ferris' uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials.
 GMAIL_SEARCH_QUERY=label:"Job Search Agent" newer_than:14d
 ENABLE_PUBLIC_SOURCE_SEARCH=true
 PUBLIC_SYNC_DRY_RUN=false
@@ -31,7 +31,7 @@ GOOGLE_OAUTH_TOKEN_JSON
 GMAIL_TO
 ```
 
-Set `GMAIL_TO` to Ferris's weekly brief email address.
+Set `GMAIL_TO` to Ferris' weekly brief email address.
 
 Do not add `OPENAI_API_KEY` unless paid OpenAI API research is intentionally enabled.
 

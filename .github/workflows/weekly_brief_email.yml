@@ -33,7 +33,7 @@ jobs:
           JOB_SEARCH_SITE_SUBTITLE: "Career Center"
           JOB_SEARCH_PROFILE_SUMMARY: "TAMS/SMU student interested in investment banking, private equity, financial analysis, and finance-focused internships involving company research, modeling, valuation, and due diligence."
           JOB_SEARCH_DASHBOARD_URL: "https://Ferrsir.github.io/job-search-agent/"
-          JOB_SEARCH_APPLICATION_CONTEXT: "Use Ferris's uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials."
+          JOB_SEARCH_APPLICATION_CONTEXT: "Use Ferris' uploaded resume, cover-letter examples, and style guide as the source of truth. Target finance internships and early analyst-style roles in DFW/Texas. Do not invent personal facts, credentials, GPA, deal experience, licenses, or university status beyond provided materials."
         run: job-search-brief
       - name: Upload emailed brief artifact
         uses: actions/upload-artifact@v4
