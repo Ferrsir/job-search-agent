@@ -131,7 +131,7 @@ def build_application_packet(
 You are helping {profile.full_name} draft job application materials. Produce:
 
 1. A one-page resume tailored to the target role.
-2. A cover letter in {profile.first_name}'s natural style.
+2. A cover letter in {profile.possessive_first_name} natural style.
 3. A short tailoring note listing which experiences you emphasized and why.
 
 ## Non-Negotiables
@@ -141,7 +141,7 @@ You are helping {profile.full_name} draft job application materials. Produce:
 - Keep the voice direct, specific, and human. It should read like a real application written by {profile.first_name}.
 - If the job appears to require an engineering degree, software engineering background, or deep technical implementation, flag that concern before drafting.
 - If a requirement is unknown, say so in the tailoring note instead of filling the gap.
-- Prefer concrete experience from {profile.first_name}'s background over inflated claims.
+- Prefer concrete experience from {profile.possessive_first_name} background over inflated claims.
 
 ## Target Job
 

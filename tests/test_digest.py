@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 
+from job_search_agent.config import UserProfile
 from job_search_agent.digest import _group_jobs, _weekly_takeaway, render_preferences_page, render_weekly_digest
 from job_search_agent.models import Classification, JobRecord, NetworkContact, ScoredJob
 
@@ -191,6 +192,24 @@ def test_weekly_email_renders_inline_newsletter_without_dashboard_script():
     assert "3+ years of partnerships" in html
     assert "migrateLegacyFeedback" not in html
     assert "job-search-agent.feedback" not in html
+
+
+def test_dashboard_wordmark_uses_ferris_possessive_style():
+    profile = UserProfile(
+        first_name="Ferris",
+        full_name="Ferris Jagger-James Childress LaVigne",
+        site_title="Ferris' Career Center",
+        site_subtitle="Career Center",
+        initials="FL",
+        profile_summary="Finance internships.",
+        dashboard_url="https://Ferrsir.github.io/job-search-agent/",
+        application_context="Use Ferris' materials.",
+    )
+
+    html = render_weekly_digest([], user_profile=profile)
+
+    assert "<strong>Ferris'</strong>" in html
+    assert "Ferris's" not in html
 
 
 def test_dashboard_renders_main_requirements():

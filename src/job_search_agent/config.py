@@ -22,15 +22,19 @@ class UserProfile:
     dashboard_url: str
     application_context: str
 
+    @property
+    def possessive_first_name(self) -> str:
+        return _possessive(self.first_name)
+
     @classmethod
     def from_env(cls) -> "UserProfile":
         first_name = os.getenv("JOB_SEARCH_USER_FIRST_NAME", "Simone").strip() or "Simone"
         full_name = os.getenv("JOB_SEARCH_USER_FULL_NAME", "Simone Montandon").strip() or first_name
+        default_site_title = f"{_possessive(first_name)} Career Center"
         return cls(
             first_name=first_name,
             full_name=full_name,
-            site_title=os.getenv("JOB_SEARCH_SITE_TITLE", f"{first_name}'s Career Center").strip()
-            or f"{first_name}'s Career Center",
+            site_title=os.getenv("JOB_SEARCH_SITE_TITLE", default_site_title).strip() or default_site_title,
             site_subtitle=os.getenv("JOB_SEARCH_SITE_SUBTITLE", "Career Center").strip() or "Career Center",
             initials=os.getenv("JOB_SEARCH_USER_INITIALS", _initials(full_name)).strip() or _initials(full_name),
             profile_summary=os.getenv(
@@ -138,3 +142,10 @@ def _initials(full_name: str) -> str:
     if not parts:
         return "U"
     return "".join(part[0].upper() for part in parts[:2])
+
+
+def _possessive(name: str) -> str:
+    cleaned = name.strip()
+    if not cleaned:
+        return ""
+    return f"{cleaned}'" if cleaned.lower().endswith("s") else f"{cleaned}'s"
