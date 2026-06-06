@@ -234,6 +234,7 @@ def test_dashboard_renders_main_requirements():
     html = render_weekly_digest([scored])
 
     assert "Main requirements" in html
+    assert 'class="requirements" title="5+ years in partnerships, strategy, or market development."' in html
     assert "5+ years in partnerships" in html
 
 
@@ -291,7 +292,7 @@ def test_dashboard_renders_application_packet_button():
     assert "Voice And Structure Profile" in html
     assert "Use the uploaded resume, cover-letter examples, and style guide as the source of truth" in html
     assert "Open in ChatGPT" in html
-    assert "https://chatgpt.com/g/g-p-6a1f49c34ec481918bc839b79a99932d-job-search/project?tab=chats" in html
+    assert "https://chatgpt.com/g/g-p-6a2389e56aa0819189877fdab6aa6363-job-search/project" in html
     assert "Downloadable Files" in html
     assert "python3 -m job_search_agent.application_materials --job-id" in html
     assert "copy-packet-prompt" in html

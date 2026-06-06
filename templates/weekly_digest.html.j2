@@ -270,8 +270,8 @@
       .meta { color: var(--fg-subtle); display: flex; flex-wrap: wrap; font-size: 14px; gap: 7px; margin-top: 5px; }
       .meta strong { color: var(--coral-600); font-weight: 700; }
 
-      .why { color: var(--fg-muted); display: -webkit-box; font-size: 14.5px; line-height: 1.5; margin: 12px 0 10px; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-      .requirements { border-left: 2px solid var(--teal-500); color: var(--fg-muted); display: -webkit-box; font-size: 13.5px; line-height: 1.45; margin: -2px 0 12px; overflow: hidden; padding-left: 12px; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+      .why { color: var(--fg-muted); display: block; font-size: 14.5px; line-height: 1.5; margin: 12px 0 10px; overflow: visible; }
+      .requirements { border-left: 2px solid var(--teal-500); color: var(--fg-muted); display: block; font-size: 13.5px; line-height: 1.45; margin: -2px 0 12px; overflow: visible; padding-left: 12px; }
       .requirements strong { color: var(--fg); display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 4px; text-transform: uppercase; }
 
       .network { background: var(--teal-tint); border: 1px solid color-mix(in oklab, var(--teal-600) 24%, transparent); border-radius: var(--r-md); color: var(--fg-muted); display: grid; font-size: 13px; gap: 9px; line-height: 1.45; margin: -2px 0 12px; padding: 11px 12px; }
@@ -500,9 +500,9 @@
             <span class="role-link">{{ scored.job.title }}</span>
           {% endif %}
           <div class="meta"><strong>{{ scored.job.company }}</strong><span>/</span><span>{{ scored.job.location or "Location TBD" }}</span></div>
-          <p class="why">{{ fit_copy }}</p>
+          <p class="why" title="{{ fit_copy }}">{{ fit_copy }}</p>
           {% if requirements_copy %}
-            <p class="requirements"><strong>Main requirements</strong>{{ requirements_copy }}</p>
+            <p class="requirements" title="{{ requirements_copy }}"><strong>Main requirements</strong>{{ requirements_copy }}</p>
           {% endif %}
           {% if scored.job.network_summary or scored.job.network_contacts %}
             <div class="network">
@@ -1002,7 +1002,9 @@
       const preferenceKey = "job-search-agent.preferences.ferris.v2";
       const viewStateKey = "job-search-agent.viewState";
       const userFirstName = {{ user_profile.first_name|tojson }};
+      const userPossessiveFirstName = {{ user_profile.possessive_first_name|tojson }};
       const userFullName = {{ user_profile.full_name|tojson }};
+      const chatgptProjectUrl = "https://chatgpt.com/g/g-p-6a2389e56aa0819189877fdab6aa6363-job-search/project";
       const applicationContext = {{ user_profile.application_context|tojson }};
       const feedback = JSON.parse(localStorage.getItem(feedbackKey) || "{}");
       const wrongReasons = JSON.parse(localStorage.getItem(wrongReasonsKey) || "{}");
@@ -1511,7 +1513,7 @@
           `You are helping ${userFullName} draft job application materials. Produce:`,
           "",
           "1. A one-page resume tailored to the target role.",
-          `2. A cover letter in ${userFirstName}'s natural style.`,
+          `2. A cover letter in ${userPossessiveFirstName} natural style.`,
           "3. A short tailoring note listing which experiences you emphasized and why.",
           "",
           "## Non-Negotiables",
@@ -1521,7 +1523,7 @@
           `- Keep the voice direct, specific, and human. It should read like a real application written by ${userFirstName}.`,
           "- If the job appears to require an engineering degree, software engineering background, or deep technical implementation, flag that concern before drafting.",
           "- If a requirement is unknown, say so in the tailoring note instead of filling the gap.",
-          `- Prefer concrete experience from ${userFirstName}'s background over inflated claims.`,
+          `- Prefer concrete experience from ${userPossessiveFirstName} background over inflated claims.`,
           "",
           "## Target Job",
           "",
@@ -1600,7 +1602,7 @@
       }
       document.getElementById("open-chatgpt").addEventListener("click", async () => {
         await copyText(packetPrompt.textContent);
-        window.open("https://chatgpt.com/g/g-p-6a1f49c34ec481918bc839b79a99932d-job-search/project?tab=chats", "_blank", "noopener,noreferrer");
+        window.open(chatgptProjectUrl, "_blank", "noopener,noreferrer");
       });
       document.getElementById("copy-packet-command").addEventListener("click", async () => {
         await copyText(packetCommand.textContent);
