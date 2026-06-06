@@ -362,8 +362,8 @@ def test_preferences_page_renders_interactive_questionnaire():
     assert "Download intake HTML" in html
     assert "Save preferences" in html
     assert "This tells the scoring algorithm which job families should rise to the top" in html
-    assert "Strategic Partnerships" in html
-    assert "job-search-agent.preferences" in html
+    assert "Investment Banking Intern" in html
+    assert "job-search-agent.preferences.ferris.v2" in html
     assert "questionnaireAnswers" in html
     assert "function preferencesFromAnswers" in html
     assert "function completedIntakeHtml(answers)" in html
