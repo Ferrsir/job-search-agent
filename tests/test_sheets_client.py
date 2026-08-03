@@ -1,3 +1,5 @@
+from datetime import date
+
 from job_search_agent.models import Classification, JobRecord, NetworkContact, ScoredJob
 from job_search_agent.sheets_client import SheetsClient, scored_jobs_from_sheet_rows
 
@@ -5,7 +7,7 @@ from job_search_agent.sheets_client import SheetsClient, scored_jobs_from_sheet_
 def test_scored_jobs_from_sheet_rows_reconstructs_active_roles():
     rows = [
         [
-            "2026-06-03",
+            date.today().isoformat(),
             "Strategic Partnerships Manager",
             "Orbit Works",
             "Austin, TX",
@@ -30,7 +32,7 @@ def test_scored_jobs_from_sheet_rows_reconstructs_active_roles():
 def test_scored_jobs_from_sheet_rows_marks_rejected_rows():
     rejected = [
         [
-            "2026-06-03",
+            date.today().isoformat(),
             "Software Engineer",
             "Prime Defense",
             "Washington, DC",
